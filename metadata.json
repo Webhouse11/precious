@@ -1,0 +1,6 @@
+{
+  "name": "Precious Gem Foods Ventures",
+  "description": "Precious Gem Foods Ventures (PGFV) provides quality food products, convenient food solutions, Christmas foodstuff savings, student packages, corporate food packages, private labelling, training and community empowerment in Nigeria.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
