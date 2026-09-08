@@ -1,4 +1,4 @@
-import { Product, Service, SavingsPlan, FAQItem, ParticipantRecord } from '../types';
+import { Product, Service, SavingsPlan, FAQItem } from '../types';
 
 export const BUSINESS_INFO = {
   name: 'Precious Gem Foods Ventures (PGFV)',
@@ -438,31 +438,4 @@ export const TERMS_CONDITIONS = [
   'Participants should retain payment records and savings details.',
   'Participants should provide accurate registration information.',
   'Participants should contact PGFV promptly with questions concerning their savings.'
-];
-
-export const MOCK_PARTICIPANTS: ParticipantRecord[] = [
-  {
-    participantId: 'PGFV-2026-0042',
-    fullName: 'Adewale T. Babatunde',
-    planName: '₦5,000 Weekly Plan',
-    weeklyAmount: 5000,
-    weeksContributed: 8,
-    totalSaved: 40000,
-    registrationDate: '01 Sep 2026',
-    status: 'Active',
-    lastPaymentDate: '26 Oct 2026',
-    paymentReference: 'PGFV-PAY-882194'
-  },
-  {
-    participantId: 'PGFV-2026-0118',
-    fullName: 'Chioma Grace Okafor',
-    planName: '₦10,000 Weekly Plan',
-    weeklyAmount: 10000,
-    weeksContributed: 6,
-    totalSaved: 60000,
-    registrationDate: '08 Sep 2026',
-    status: 'Active',
-    lastPaymentDate: '18 Oct 2026',
-    paymentReference: 'PGFV-PAY-914205'
-  }
 ];

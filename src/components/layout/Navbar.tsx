@@ -6,8 +6,7 @@ import {
   Sparkles, 
   ShoppingBag, 
   Calendar, 
-  ChevronRight,
-  UserCheck
+  ChevronRight
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
 import { PageView } from '../../types';
@@ -16,10 +15,9 @@ interface NavbarProps {
   currentPage: PageView;
   onNavigate: (page: PageView, sectionId?: string) => void;
   onOpenRegister: (planId?: string) => void;
-  onOpenPortal: () => void;
 }
 
-export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenPortal }: NavbarProps) {
+export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (page: PageView, sectionId?: string) => {
@@ -183,18 +181,8 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenPortal }
           {/* Action CTAs */}
           <div className="hidden lg:flex items-center gap-3">
             <button
-              onClick={onOpenPortal}
-              className="text-xs font-semibold text-[#1B4332] hover:text-[#0F2B20] px-3 py-2 rounded-lg border border-[#D5CCBE] hover:border-[#1B4332] flex items-center gap-1.5 transition-all"
-              title="Look up savings record"
-              id="lookup-savings-card-btn"
-            >
-              <UserCheck className="w-3.5 h-3.5 text-[#1B4332]" />
-              <span>Participant Portal</span>
-            </button>
-
-            <button
               onClick={() => onOpenRegister()}
-              className="bg-[#1B4332] hover:bg-[#143527] text-white px-4 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:shadow transition-all flex items-center gap-2 group"
+              className="bg-[#1B4332] hover:bg-[#143527] text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-sm hover:shadow transition-all flex items-center gap-2 group cursor-pointer"
               id="header-start-saving-btn"
             >
               <span>START SAVING</span>
@@ -313,18 +301,7 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenPortal }
             </button>
           </div>
 
-          <div className="pt-2 flex flex-col gap-2">
-            <button
-              onClick={() => {
-                setMobileMenuOpen(false);
-                onOpenPortal();
-              }}
-              className="w-full py-2.5 px-4 rounded-xl border border-[#1B4332] text-[#1B4332] font-semibold text-sm flex items-center justify-center gap-2"
-            >
-              <UserCheck className="w-4 h-4" />
-              <span>Participant Savings Record Portal</span>
-            </button>
-
+          <div className="pt-2">
             <button
               onClick={() => {
                 setMobileMenuOpen(false);

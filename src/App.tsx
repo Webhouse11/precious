@@ -28,7 +28,6 @@ import { ContactSection } from './components/sections/ContactSection';
 // Modals
 import { RegistrationModal } from './components/modals/RegistrationModal';
 import { EnquiryModal } from './components/modals/EnquiryModal';
-import { ParticipantPortalModal } from './components/modals/ParticipantPortalModal';
 import { TermsModal } from './components/modals/TermsModal';
 import { PrivacyModal } from './components/modals/PrivacyModal';
 
@@ -38,7 +37,6 @@ export default function App() {
   // Modals state
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
   const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>(undefined);
-  const [isPortalOpen, setIsPortalOpen] = useState(false);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
 
@@ -114,7 +112,6 @@ export default function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         onOpenRegister={() => handleOpenRegister()}
-        onOpenPortal={() => setIsPortalOpen(true)}
       />
 
       {/* Main Content Flow */}
@@ -251,12 +248,6 @@ export default function App() {
         title={enquiryConfig.title}
         defaultCategory={enquiryConfig.category}
         itemName={enquiryConfig.itemName}
-      />
-
-      <ParticipantPortalModal
-        isOpen={isPortalOpen}
-        onClose={() => setIsPortalOpen(false)}
-        onOpenRegister={() => handleOpenRegister()}
       />
 
       <TermsModal
