@@ -90,9 +90,10 @@ export function StudentFoodSection({ onEnquireStudents, onOpenRegister }: Studen
             <div className="lg:col-span-5">
               <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <img
-                  src="https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=800&q=80"
+                  src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg"
                   alt="Students and youth food packaging empowerment at PGFV"
                   className="w-full h-80 object-cover"
+                  referrerPolicy="no-referrer"
                 />
                 <div className="p-4 bg-[#1B4332] text-white text-center">
                   <span className="font-heading font-bold text-sm block">

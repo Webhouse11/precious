@@ -147,6 +147,19 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
               Student Packages
             </button>
             <button
+              onClick={() => handleNavClick('reviews', 'reviews-section')}
+              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                currentPage === 'reviews' 
+                  ? 'text-[#1B4332] bg-[#EFE9DF] font-bold' 
+                  : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
+              }`}
+            >
+              <span>Reviews</span>
+              <span className="text-[10px] font-bold px-1.5 py-0.2 rounded bg-[#1B4332] text-[#E2B13C]">
+                5★
+              </span>
+            </button>
+            <button
               onClick={() => handleNavClick('impact', 'impact-section')}
               className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
                 currentPage === 'impact' 
@@ -268,6 +281,15 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
               className="text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
             >
               Student Packages
+            </button>
+            <button
+              onClick={() => handleNavClick('reviews', 'reviews-section')}
+              className="text-left px-3 py-2 text-sm font-semibold text-[#1B4332] bg-[#E2B13C]/15 rounded-lg flex items-center justify-between"
+            >
+              <span>Customer Reviews</span>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1B4332] text-[#E2B13C]">
+                5.0 ★
+              </span>
             </button>
             <button
               onClick={() => handleNavClick('impact', 'impact-section')}

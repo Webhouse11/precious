@@ -1,4 +1,4 @@
-import { Product, Service, SavingsPlan, FAQItem } from '../types';
+import { Product, Service, SavingsPlan, FAQItem, CustomerReview } from '../types';
 
 export const BUSINESS_INFO = {
   name: 'Precious Gem Foods Ventures (PGFV)',
@@ -42,7 +42,7 @@ export const PRODUCTS: Product[] = [
     name: 'Beans Flour',
     category: 'FLOUR & MIXES',
     description: '100% pure, stoneless, peeled beans flour prepared hygienically. Perfect for instant smooth akara, moi-moi, and gbegiri.',
-    image: 'https://images.unsplash.com/photo-1586201375761-83865001e31c?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
     tag: 'Hygienically Processed'
   },
   {
@@ -50,7 +50,7 @@ export const PRODUCTS: Product[] = [
     name: 'Puff Puff Mix',
     category: 'FLOUR & MIXES',
     description: 'Convenient, pre-measured puff puff flour blend with gentle aromatic sweetness for fluffy, golden pastries in minutes.',
-    image: 'https://images.unsplash.com/photo-1541592106381-b31e9677c0e5?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
     tag: 'Quick Preparation'
   },
   {
@@ -58,7 +58,7 @@ export const PRODUCTS: Product[] = [
     name: 'Custard Powder',
     category: 'FLOUR & MIXES',
     description: 'Smooth, creamy, and fortified custard powder for family breakfasts, rich desserts, and student morning fuel.',
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
     tag: 'Family Favourite'
   },
   {
@@ -66,7 +66,7 @@ export const PRODUCTS: Product[] = [
     name: 'Plantain Flour',
     category: 'FLOUR & MIXES',
     description: 'Naturally dried unripe plantain flour, rich in dietary fiber and essential minerals. Excellent healthy swallow alternative.',
-    image: 'https://images.unsplash.com/photo-1528825871115-3581a5387919?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
     tag: 'Healthy Choice'
   },
   {
@@ -74,7 +74,7 @@ export const PRODUCTS: Product[] = [
     name: 'Yam Flour (Elubo)',
     category: 'FLOUR & MIXES',
     description: 'Authentic traditional brown yam flour for delicious, smooth amala. Thoroughly cleaned, dried, and fine-milled.',
-    image: 'https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
     tag: 'Traditional Quality'
   },
   {
@@ -82,7 +82,7 @@ export const PRODUCTS: Product[] = [
     name: 'Oven-Dried Catfish',
     category: 'PROTEINS',
     description: 'Neatly cleaned, gutted, and hygienically smoked oven-dried catfish. Sand-free, aromatic, and rich in natural flavour.',
-    image: 'https://images.unsplash.com/photo-1534939561126-855b8675edd7?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
     tag: 'Sand-Free'
   },
   {
@@ -90,7 +90,7 @@ export const PRODUCTS: Product[] = [
     name: 'Neat Dried Ponmo Ijebu',
     category: 'PROTEINS',
     description: 'Carefully scrubbed, hygienically sun-dried Ponmo Ijebu. Expands beautifully during cooking with tender, chewy texture.',
-    image: 'https://images.unsplash.com/photo-1607623814075-e51df1bdc82f?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
     tag: 'Clean & Safe'
   },
   {
@@ -98,7 +98,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chin Chin',
     category: 'SNACKS',
     description: 'Crunchy, rich, buttery Nigerian chin chin with hints of nutmeg and milk. Ideal for quick bites, gifts, and souvenirs.',
-    image: 'https://images.unsplash.com/photo-1599785209707-a456fc1337bb?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
     tag: 'Crispy & Rich'
   },
   {
@@ -106,7 +106,7 @@ export const PRODUCTS: Product[] = [
     name: 'Garri (White & Yellow)',
     category: 'GRAINS & FOODSTUFF',
     description: 'Well-fermented, finely sifted, crispy garri with delicious sourness. Free from grit or impurities; great for soaking or eba.',
-    image: 'https://images.unsplash.com/photo-1615485290382-441e4d049cb5?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
     tag: 'Grit-Free'
   },
   {
@@ -114,7 +114,7 @@ export const PRODUCTS: Product[] = [
     name: 'Premium Rice',
     category: 'GRAINS & FOODSTUFF',
     description: 'Stoneless, cleanly bagged long-grain parboiled rice. Cooks firm and non-sticky for classic jollof and fried rice.',
-    image: 'https://images.unsplash.com/photo-1536304993881-ff6e9eefa2a6?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937287/1000290187_vwyuyg.jpg',
     tag: 'Stoneless Rice'
   },
   {
@@ -122,7 +122,7 @@ export const PRODUCTS: Product[] = [
     name: 'Neatly Picked Honey Beans (Oloyin)',
     category: 'GRAINS & FOODSTUFF',
     description: 'Cleanly sorted, naturally sweet brown honey beans (Oloyin). Free from weevils and dirt, ready for boiling.',
-    image: 'https://images.unsplash.com/photo-1551462147-ff29053bfc14?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290177_yo7qcp.jpg',
     tag: 'Pest-Free'
   },
   {
@@ -130,7 +130,7 @@ export const PRODUCTS: Product[] = [
     name: 'Wheat Flour',
     category: 'FLOUR & MIXES',
     description: 'Whole grain and all-purpose wheat flours for pastries, breads, and healthy homemade swallow doughs.',
-    image: 'https://images.unsplash.com/photo-1509440159596-0249088772ff?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
     tag: 'High Grade'
   },
   {
@@ -138,7 +138,7 @@ export const PRODUCTS: Product[] = [
     name: 'Buns Mix',
     category: 'FLOUR & MIXES',
     description: 'Balanced flour formulation for soft-centered Nigerian buns with a crisp golden exterior. Simple just-add-water ease.',
-    image: 'https://images.unsplash.com/photo-1589367920969-ab8e050bbb04?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
     tag: 'Easy Bake'
   },
   {
@@ -146,7 +146,7 @@ export const PRODUCTS: Product[] = [
     name: 'Cooking Oils (Vegetable & Pure Palm Oil)',
     category: 'GRAINS & FOODSTUFF',
     description: 'Unadulterated red palm oil with rich earthy aroma, and cholesterol-free double-refined vegetable cooking oil.',
-    image: 'https://images.unsplash.com/photo-1474979266404-7eaacbcd87c5?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
     tag: 'Pure & Fresh'
   },
   {
@@ -154,7 +154,7 @@ export const PRODUCTS: Product[] = [
     name: 'Select Food Yams',
     category: 'GRAINS & FOODSTUFF',
     description: 'Dry, mature yam tubers carefully chosen for pounding and boiling with high starch density and pure white flesh.',
-    image: 'https://images.unsplash.com/photo-1596097635121-14b63b7a0c19?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
     tag: 'Farm Select'
   },
   {
@@ -162,7 +162,7 @@ export const PRODUCTS: Product[] = [
     name: 'Chicken / Beef Portions',
     category: 'PROTEINS',
     description: 'Hygienically handled and frozen/preserved protein cuts prepared to order for festive packages and family cooking.',
-    image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
     tag: 'Hygienic Sourcing'
   },
   {
@@ -170,7 +170,7 @@ export const PRODUCTS: Product[] = [
     name: 'Packaged Drinks & Beverages',
     category: 'DRINKS',
     description: 'Quality fruit juices, malt drinks, and wholesome beverages supplied for events, hampers, and family celebration packages.',
-    image: 'https://images.unsplash.com/photo-1534353473418-4cfa6c56fd38?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290184_fj91xb.jpg',
     tag: 'Festive Ready'
   },
   {
@@ -178,7 +178,7 @@ export const PRODUCTS: Product[] = [
     name: 'Assorted Gourmet Snacks & Other Food Items',
     category: 'OTHER',
     description: 'Groundnuts, plantain chips, packaged local condiments, and seasonal foodstuffs available upon special request.',
-    image: 'https://images.unsplash.com/photo-1599599810769-bcde5a160d32?auto=format&fit=crop&w=800&q=80',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
     tag: 'Seasonal Stock'
   }
 ];
@@ -419,6 +419,81 @@ export const FAQ_LIST: FAQItem[] = [
     question: 'Can you deliver to my location?',
     answer: 'PGFV delivers through trusted courier and dispatch services right to customers’ doorsteps. We are based in Ile-Ife, Osun State, and arrange deliveries across various accessible destinations.',
     category: 'DELIVERY & PACKAGES'
+  }
+];
+
+export const CUSTOMER_REVIEWS: CustomerReview[] = [
+  {
+    id: 'review-1',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936248/1000290173_qjwbso.jpg',
+    tag: 'REVIEWS',
+    title: 'Staple Food Quality & Prompt Delivery',
+    category: 'Verified Customer Review',
+    highlight: 'Commended the cleanliness of the foodstuffs, neat packaging, and dependable doorstep delivery.'
+  },
+  {
+    id: 'review-2',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936234/1000290170_p76hol.jpg',
+    tag: 'REVIEWS',
+    title: 'Hygienic Packaging & Freshness',
+    category: 'WhatsApp Feedback',
+    highlight: 'Appreciated the stone-free quality and airtight sealed food packaging.'
+  },
+  {
+    id: 'review-3',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936234/1000290172_prtbdv.jpg',
+    tag: 'REVIEWS',
+    title: 'Christmas Savings Plan Satisfaction',
+    category: 'Savings Plan Participant',
+    highlight: 'Expressed delight receiving complete food package smoothly without holiday stress or price hikes.'
+  },
+  {
+    id: 'review-4',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936234/1000290171_wvfm3k.jpg',
+    tag: 'REVIEWS',
+    title: 'Trustworthy & Courteous Service',
+    category: 'Customer Experience',
+    highlight: 'Highlighted honest communication, seamless WhatsApp coordination, and polite customer handling.'
+  },
+  {
+    id: 'review-5',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936217/1000290167_t8sr3l.jpg',
+    tag: 'REVIEWS',
+    title: 'Beans Flour & Easy Cooking Solution',
+    category: 'Product Review',
+    highlight: 'Puffed up wonderful akara and moi-moi with zero grit or stone, saving valuable preparation time.'
+  },
+  {
+    id: 'review-6',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936207/1000290165_r2fknc.jpg',
+    tag: 'REVIEWS',
+    title: 'Student Food Package Recommendation',
+    category: 'Campus Student Solution',
+    highlight: 'Budget-friendly, highly organized foodstuff packages that kept hostel cooking easy throughout the semester.'
+  },
+  {
+    id: 'review-7',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936206/1000290169_a200nl.jpg',
+    tag: 'REVIEWS',
+    title: 'Household Family Sourcing Made Easy',
+    category: 'Family Food Basket',
+    highlight: 'Relieved the burden of going to crowded local markets; fresh and neatly measured food delivered home.'
+  },
+  {
+    id: 'review-8',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936206/1000290168_wnxyel.jpg',
+    tag: 'REVIEWS',
+    title: 'Integrity in Weight & Measurements',
+    category: 'Verified Buyer Feedback',
+    highlight: 'Confirmed full measurements, clean grains, and value that exceeded open-market pricing.'
+  },
+  {
+    id: 'review-9',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788936206/1000290166_llenof.jpg',
+    tag: 'REVIEWS',
+    title: 'Consistent Excellence & Repeat Patronage',
+    category: 'Repeat Customer Testimony',
+    highlight: 'Praised PGFV for keeping the same high hygiene and dependable standard on every single order.'
   }
 ];
 

@@ -32,3 +32,33 @@
 ::-webkit-scrollbar-thumb:hover {
   background: #143527;
 }
+
+/* Reviews Marquee Animation */
+@keyframes reviews-marquee {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.reviews-marquee-track {
+  display: flex;
+  width: max-content;
+  animation: reviews-marquee 65s linear infinite;
+  will-change: transform;
+}
+
+.reviews-marquee-track:hover,
+.reviews-marquee-track.is-paused {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reviews-marquee-track {
+    animation: none;
+    overflow-x: auto;
+  }
+}
+

@@ -36,9 +36,10 @@ export function AboutSection({ onLearnMore, onExplorePlans }: AboutSectionProps)
 
               <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <img 
-                  src="https://images.unsplash.com/photo-1596040033229-a9821ebd058d?auto=format&fit=crop&w=900&q=80" 
+                  src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg" 
                   alt="Quality food preparation and hygienic packaging at Precious Gem Foods Ventures"
                   className="w-full h-80 sm:h-96 object-cover"
+                  referrerPolicy="no-referrer"
                 />
               </div>
 

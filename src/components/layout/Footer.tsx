@@ -125,6 +125,15 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
               </li>
               <li>
                 <button 
+                  onClick={() => onNavigate('reviews', 'reviews-section')}
+                  className="hover:text-white transition-colors text-left flex items-center gap-1.5"
+                >
+                  <span>Customer Reviews</span>
+                  <span className="text-[10px] bg-[#E2B13C] text-[#122A20] px-1.5 py-0.2 rounded font-bold">5★</span>
+                </button>
+              </li>
+              <li>
+                <button 
                   onClick={() => onNavigate('impact', 'impact-section')}
                   className="hover:text-white transition-colors text-left"
                 >

@@ -63,7 +63,7 @@ export function HeroSection({
       secondaryBtnText: 'EXPLORE 5 TIERS',
       secondaryAction: () => onExplorePlans(),
       image:
-        'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?auto=format&fit=crop&w=1200&q=80',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937287/1000290187_vwyuyg.jpg',
       imageBadge: 'Flagship Food Savings',
       badgeHighlight: 'From ₦2,000 / Week',
       cardTitle: '2026 SAVINGS MILESTONES',
@@ -95,7 +95,7 @@ export function HeroSection({
       secondaryBtnText: 'JOIN ₦2,000 / WK PLAN',
       secondaryAction: () => onStartSaving('plan-2000'),
       image:
-        'https://images.unsplash.com/photo-1523240795612-9a054b0db644?auto=format&fit=crop&w=1200&q=80',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
       imageBadge: 'Campus Welfare Solution',
       badgeHighlight: 'Hostel-Ready Portions',
       cardTitle: 'STUDENT CARE HIGHLIGHTS',
@@ -129,7 +129,7 @@ export function HeroSection({
         window.open(createWhatsAppUrl('Hello PGFV, I would like to request a corporate quotation for staff food packages and Christmas hampers.'), '_blank');
       },
       image:
-        'https://images.unsplash.com/photo-1513885535751-8b9238bd345a?auto=format&fit=crop&w=1200&q=80',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
       imageBadge: 'Corporate & Staff Welfare',
       badgeHighlight: 'Custom Invoicing',
       cardTitle: 'CORPORATE ADVANTAGES',
@@ -170,7 +170,7 @@ export function HeroSection({
         if (el) el.scrollIntoView({ behavior: 'smooth' });
       },
       image:
-        'https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=1200&q=80',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
       imageBadge: 'Supermarkets & Retailers',
       badgeHighlight: 'Your Brand On Pack',
       cardTitle: 'PACKAGING STANDARDS',
@@ -215,7 +215,7 @@ export function HeroSection({
         }
       },
       image:
-        'https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=1200&q=80',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290177_yo7qcp.jpg',
       imageBadge: 'Events & Community Welfare',
       badgeHighlight: 'Impact Beyond Plate',
       cardTitle: 'COMMUNITY IMPACT',
@@ -561,6 +561,7 @@ export function HeroSection({
                         alt={slide.tabLabel}
                         className="w-full h-full object-cover"
                         loading="eager"
+                        referrerPolicy="no-referrer"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0F2B20]/85 via-black/20 to-transparent" />
                       

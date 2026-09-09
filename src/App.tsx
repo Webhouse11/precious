@@ -18,6 +18,7 @@ import { WhatYouReceiveSection } from './components/sections/WhatYouReceiveSecti
 import { FoodPreferenceSection } from './components/sections/FoodPreferenceSection';
 import { FounderSection } from './components/sections/FounderSection';
 import { StudentFoodSection } from './components/sections/StudentFoodSection';
+import { ReviewsSection } from './components/sections/ReviewsSection';
 import { CorporatePackagesSection } from './components/sections/CorporatePackagesSection';
 import { ImpactSection } from './components/sections/ImpactSection';
 import { PartnershipsSection } from './components/sections/PartnershipsSection';
@@ -195,7 +196,12 @@ export default function App() {
           onOpenRegister={() => handleOpenRegister('plan-2000')}
         />
 
-        {/* 14. Corporate & Christmas Packages */}
+        {/* 14. Customer Reviews Showcase (Tagged REVIEWS with smooth scrolling marquee) */}
+        <ReviewsSection 
+          onStartSaving={() => handleOpenRegister()}
+        />
+
+        {/* 15. Corporate & Christmas Packages */}
         <CorporatePackagesSection
           onRequestQuotation={handleOpenCorporateQuotation}
         />

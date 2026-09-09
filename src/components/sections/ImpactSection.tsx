@@ -58,9 +58,10 @@ export function ImpactSection() {
         <div className="bg-[#FAF5EC] rounded-3xl p-6 sm:p-10 border border-[#E5DDD0] flex flex-col md:flex-row items-center gap-8">
           <div className="w-full md:w-1/3 rounded-2xl overflow-hidden shadow-md">
             <img
-              src="https://images.unsplash.com/photo-1593113598332-cd288d649433?auto=format&fit=crop&w=800&q=80"
+              src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290184_fj91xb.jpg"
               alt="Community food distribution and welfare support"
               className="w-full h-56 object-cover"
+              referrerPolicy="no-referrer"
             />
           </div>
           <div className="w-full md:w-2/3 space-y-3">

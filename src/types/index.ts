@@ -46,6 +46,15 @@ export interface ParticipantRecord {
   paymentReference: string;
 }
 
+export interface CustomerReview {
+  id: string;
+  image: string;
+  tag: string;
+  title: string;
+  category: string;
+  highlight?: string;
+}
+
 export type PageView = 
   | 'home'
   | 'about'
@@ -53,6 +62,7 @@ export type PageView =
   | 'services'
   | 'savings'
   | 'students'
+  | 'reviews'
   | 'impact'
   | 'partnerships'
   | 'faq'
