@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { ChevronDown, Search, HelpCircle, MessageSquare } from 'lucide-react';
 import { FAQ_LIST, BUSINESS_INFO } from '../../data/mockData';
-import { createWhatsAppUrl } from '../../utils/helpers';
+import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE } from '../../utils/helpers';
 
 export function FAQSection() {
   const [searchQuery, setSearchQuery] = useState('');
@@ -28,8 +28,10 @@ export function FAQSection() {
   };
 
   const handleAskQuestion = () => {
-    const text = `Hello PGFV, I have a question regarding your Christmas Savings Plan / Products.`;
-    window.open(createWhatsAppUrl(text), '_blank');
+    const text = searchQuery.trim()
+      ? `Hello Precious Gem Foods Ventures, I have a question regarding: "${searchQuery.trim()}". Could you please assist me?`
+      : `Hello Precious Gem Foods Ventures, I have a question regarding your Christmas Savings Plan / Food Products.`;
+    window.open(createWhatsAppUrl(text, PGFV_WHATSAPP_PHONE), '_blank');
   };
 
   return (

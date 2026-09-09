@@ -8,10 +8,13 @@ import {
   Send, 
   CheckCircle2, 
   ExternalLink,
-  Clock
+  Clock,
+  Copy,
+  Check,
+  RotateCcw
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
-import { saveEnquiryLocally, createWhatsAppUrl } from '../../utils/helpers';
+import { saveEnquiryLocally, createWhatsAppUrl, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY } from '../../utils/helpers';
 
 export function ContactSection() {
   const [name, setName] = useState('');
@@ -20,6 +23,24 @@ export function ContactSection() {
   const [enquiryType, setEnquiryType] = useState('General Enquiry');
   const [message, setMessage] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [copied, setCopied] = useState(false);
+
+  const buildWhatsAppContactText = () => {
+    return [
+      `*PRECIOUS GEM FOODS VENTURES (PGFV)*`,
+      `*NEW DIRECT ENQUIRY*`,
+      `=========================================`,
+      `*Category:* ${enquiryType}`,
+      `*Full Name:* ${name}`,
+      `*Phone / WhatsApp:* ${phone}`,
+      `*Email:* ${email || 'Not provided'}`,
+      `=========================================`,
+      `*Message / Requirements:*`,
+      `${message}`,
+      `=========================================`,
+      `Hello Precious Gem Foods Ventures, I just submitted this message on your website and would like to chat with your support desk.`
+    ].join('\n');
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -34,11 +55,31 @@ export function ContactSection() {
     });
 
     setSubmitted(true);
+
+    // Immediately submit & open WhatsApp with +234 916 762 1558
+    const text = buildWhatsAppContactText();
+    window.open(createWhatsAppUrl(text, PGFV_WHATSAPP_PHONE), '_blank');
   };
 
   const handleWhatsAppDirect = () => {
-    const text = `Hello Precious Gem Foods Ventures, my name is ${name || 'Customer'}. I would like to make an enquiry: ${message || 'Please provide more details.'}`;
-    window.open(createWhatsAppUrl(text), '_blank');
+    const text = buildWhatsAppContactText();
+    window.open(createWhatsAppUrl(text, PGFV_WHATSAPP_PHONE), '_blank');
+  };
+
+  const handleCopy = () => {
+    const text = buildWhatsAppContactText();
+    navigator.clipboard.writeText(text).then(() => {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 3000);
+    });
+  };
+
+  const handleReset = () => {
+    setName('');
+    setPhone('');
+    setEmail('');
+    setMessage('');
+    setSubmitted(false);
   };
 
   return (
@@ -206,23 +247,42 @@ export function ContactSection() {
               </p>
 
               {submitted ? (
-                <div className="text-center py-10 space-y-4">
+                <div className="text-center py-8 space-y-4">
                   <div className="w-14 h-14 rounded-full bg-[#1B4332]/10 text-[#1B4332] flex items-center justify-center mx-auto">
-                    <CheckCircle2 className="w-8 h-8" />
+                    <CheckCircle2 className="w-9 h-9" />
                   </div>
                   <h4 className="font-heading font-bold text-xl text-[#143527]">
-                    Message Sent Successfully!
+                    Message Submitted & WhatsApp Opened!
                   </h4>
-                  <p className="text-sm text-[#4E5C54] max-w-md mx-auto">
-                    Thank you for contacting Precious Gem Foods Ventures. Our team will get back to you as soon as possible.
+                  <p className="text-sm text-[#4E5C54] max-w-md mx-auto leading-relaxed">
+                    Thank you for contacting Precious Gem Foods Ventures. Your enquiry has been submitted and connected directly to our support desk on WhatsApp (<strong className="text-[#143527]">+{PGFV_WHATSAPP_PHONE}</strong>).
                   </p>
-                  <div className="pt-2">
+
+                  <div className="flex flex-col sm:flex-row items-center justify-center gap-3 pt-2">
                     <button
                       onClick={handleWhatsAppDirect}
-                      className="px-6 py-2.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold inline-flex items-center gap-2"
+                      className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white text-xs font-bold inline-flex items-center justify-center gap-2 shadow-sm transition-all"
                     >
                       <MessageSquare className="w-4 h-4" />
-                      <span>Continue on WhatsApp</span>
+                      <span>Open WhatsApp Chat ({PGFV_WHATSAPP_DISPLAY})</span>
+                    </button>
+
+                    <button
+                      onClick={handleCopy}
+                      className="w-full sm:w-auto px-5 py-3 rounded-xl bg-[#FAF7F2] hover:bg-[#F2ECE1] text-[#1B4332] border border-[#D8CFC2] text-xs font-bold inline-flex items-center justify-center gap-2 transition-all"
+                    >
+                      {copied ? <Check className="w-4 h-4 text-[#1B4332]" /> : <Copy className="w-4 h-4 text-[#7B8B82]" />}
+                      <span>{copied ? 'Copied to Clipboard!' : 'Copy Enquiry Message'}</span>
+                    </button>
+                  </div>
+
+                  <div className="pt-3 border-t border-[#EFEBE3]">
+                    <button
+                      onClick={handleReset}
+                      className="text-xs text-[#6B7B73] hover:text-[#1B4332] font-semibold flex items-center justify-center gap-1.5 mx-auto transition-colors"
+                    >
+                      <RotateCcw className="w-3.5 h-3.5" />
+                      <span>Send another message</span>
                     </button>
                   </div>
                 </div>
@@ -304,14 +364,20 @@ export function ContactSection() {
                     />
                   </div>
 
-                  <button
-                    type="submit"
-                    className="w-full py-3.5 px-6 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2 shadow-sm"
-                    id="submit-contact-btn"
-                  >
-                    <Send className="w-4 h-4 text-[#E2B13C]" />
-                    <span>SEND MESSAGE</span>
-                  </button>
+                  <div className="pt-1">
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 px-6 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white font-bold text-sm uppercase tracking-wider transition-all flex items-center justify-center gap-2.5 shadow-sm group"
+                      id="submit-contact-btn"
+                    >
+                      <MessageSquare className="w-4 h-4 text-[#25D366] group-hover:scale-110 transition-transform" />
+                      <span>SUBMIT & SEND VIA WHATSAPP</span>
+                      <Send className="w-4 h-4 text-[#E2B13C]" />
+                    </button>
+                    <p className="text-xs text-[#7A8B83] text-center mt-2">
+                      Submits form and connects directly to WhatsApp desk: <span className="font-bold text-[#143527]">+{PGFV_WHATSAPP_PHONE}</span>
+                    </p>
+                  </div>
                 </form>
               )}
             </div>

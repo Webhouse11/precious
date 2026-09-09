@@ -1,6 +1,6 @@
 import { useState, useId } from 'react';
-import { Calculator, AlertCircle, ArrowRight, Check } from 'lucide-react';
-import { formatNaira } from '../../utils/helpers';
+import { Calculator, AlertCircle, ArrowRight, Check, MessageSquare } from 'lucide-react';
+import { formatNaira, createWhatsAppUrl } from '../../utils/helpers';
 
 interface SavingsCalculatorSectionProps {
   onStartWithAmount: (weeklyAmount: number, weeks: number) => void;
@@ -14,6 +14,20 @@ export function SavingsCalculatorSection({ onStartWithAmount }: SavingsCalculato
   const weeklyOptions = [2000, 3000, 5000, 10000, 15000];
 
   const estimatedTotal = selectedWeekly * weeks;
+
+  const handleChatOnWhatsApp = () => {
+    const text = [
+      `*PRECIOUS GEM FOODS VENTURES (PGFV)*`,
+      `*CHRISTMAS FOODSTUFF SAVINGS ESTIMATE*`,
+      `=========================================`,
+      `*Weekly Contribution:* ${formatNaira(selectedWeekly)}`,
+      `*Duration:* ${weeks} weeks`,
+      `*Estimated Accumulation:* ${formatNaira(estimatedTotal)}`,
+      `=========================================`,
+      `Hello PGFV, I calculated this savings plan on your website and would like to register or get more details.`
+    ].join('\n');
+    window.open(createWhatsAppUrl(text), '_blank');
+  };
 
   return (
     <section id="savings-calculator" className="py-16 sm:py-24 bg-[#FAF7F2] border-b border-[#E8E2D5]">
@@ -104,14 +118,24 @@ export function SavingsCalculatorSection({ onStartWithAmount }: SavingsCalculato
                   </p>
                 </div>
 
-                <button
-                  onClick={() => onStartWithAmount(selectedWeekly, weeks)}
-                  className="w-full sm:w-auto px-6 py-3 rounded-xl bg-[#E2B13C] hover:bg-[#C68A1B] text-[#122A20] font-bold text-xs uppercase tracking-wider shadow-md transition-colors flex items-center justify-center gap-2 shrink-0"
-                  id="calc-start-plan-btn"
-                >
-                  <span>START WITH THIS PLAN</span>
-                  <ArrowRight className="w-4 h-4" />
-                </button>
+                <div className="flex flex-col sm:flex-row items-center gap-2.5 w-full sm:w-auto">
+                  <button
+                    onClick={() => onStartWithAmount(selectedWeekly, weeks)}
+                    className="w-full sm:w-auto px-6 py-3.5 rounded-xl bg-[#E2B13C] hover:bg-[#C68A1B] text-[#122A20] font-bold text-xs uppercase tracking-wider shadow-md transition-colors flex items-center justify-center gap-2 shrink-0"
+                    id="calc-start-plan-btn"
+                  >
+                    <span>START WITH THIS PLAN</span>
+                    <ArrowRight className="w-4 h-4" />
+                  </button>
+
+                  <button
+                    onClick={handleChatOnWhatsApp}
+                    className="w-full sm:w-auto px-5 py-3.5 rounded-xl bg-[#25D366] hover:bg-[#20ba59] text-white font-bold text-xs uppercase tracking-wider shadow-md transition-colors flex items-center justify-center gap-2 shrink-0"
+                  >
+                    <MessageSquare className="w-4 h-4" />
+                    <span>ENQUIRE ON WHATSAPP</span>
+                  </button>
+                </div>
               </div>
             </div>
 
