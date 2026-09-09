@@ -5,7 +5,9 @@ import {
   Sparkles, 
   ExternalLink,
   ShieldCheck,
-  FileText
+  FileText,
+  Globe,
+  Lock
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
 import { PageView } from '../../types';
@@ -253,6 +255,24 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
                 >
                   {BUSINESS_INFO.email}
                 </a>
+              </div>
+              <div className="flex items-center gap-2.5">
+                <Globe className="w-4 h-4 text-[#E2B13C] shrink-0" />
+                <a 
+                  href="https://preciousgemfoods.com.ng" 
+                  target="_blank"
+                  rel="noreferrer"
+                  className="hover:text-white transition-colors text-xs font-medium text-[#D8E6DE] flex items-center gap-1"
+                >
+                  <span>preciousgemfoods.com.ng</span>
+                  <ExternalLink className="w-3 h-3 text-[#7FA695]" />
+                </a>
+              </div>
+              <div className="flex items-center gap-2 pt-1">
+                <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#18392B] border border-[#2B5643] text-[11px] text-[#A6CDBA]">
+                  <Lock className="w-3 h-3 text-[#25D366]" />
+                  <span>256-bit SSL Encrypted (HTTPS)</span>
+                </div>
               </div>
             </div>
 

@@ -11,6 +11,8 @@ export const BUSINESS_INFO = {
   whatsapp: '2349167621558',
   whatsappFormatted: '234-9167621558',
   email: 'preciousgementerprise@gmail.com',
+  website: 'https://preciousgemfoods.com.ng',
+  domain: 'preciousgemfoods.com.ng',
   location: 'Ile-Ife, Osun State, Nigeria',
   address: 'Ile-Ife, Osun State, Nigeria (Nationwide Doorstep Delivery Available)',
   socials: {
