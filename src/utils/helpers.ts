@@ -16,6 +16,15 @@ export function createWhatsAppUrl(message: string, phone: string = PGFV_WHATSAPP
   return `https://wa.me/${cleanPhone}?text=${encodeURIComponent(message)}`;
 }
 
+export function optimizeCloudinary(url: string, width: number = 800, quality: string = 'auto:eco'): string {
+  if (!url || !url.includes('res.cloudinary.com')) return url;
+  // If already transformed, don't duplicate
+  if (url.includes('/upload/f_auto') || url.includes('/upload/w_') || url.includes('/upload/q_')) {
+    return url;
+  }
+  return url.replace('/upload/', `/upload/f_auto,q_${quality},w_${width}/`);
+}
+
 export const STORAGE_KEYS = {
   REGISTRATIONS: 'pgfv_registrations_v1',
   FOOD_PREFERENCES: 'pgfv_food_preferences_v1',

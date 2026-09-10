@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { CUSTOMER_REVIEWS, BUSINESS_INFO } from '../../data/mockData';
 import { CustomerReview } from '../../types';
-import { createWhatsAppUrl } from '../../utils/helpers';
+import { createWhatsAppUrl, optimizeCloudinary } from '../../utils/helpers';
 
 interface ReviewsSectionProps {
   onStartSaving?: () => void;
@@ -192,10 +192,12 @@ export function ReviewsSection({ onStartSaving }: ReviewsSectionProps) {
               {/* Review Screenshot Viewport */}
               <div className="relative w-full h-[320px] sm:h-[360px] bg-[#11241C] rounded-xl overflow-hidden border border-[#E6DFC9] flex items-center justify-center group/img">
                 <img
-                  src={review.image}
+                  src={optimizeCloudinary(review.image, 500)}
                   alt={`Precious Gem Foods Ventures Review - ${review.title}`}
                   className="w-full h-full object-contain p-1 group-hover/img:scale-[1.03] transition-transform duration-300"
                   loading="lazy"
+                  width={320}
+                  height={360}
                   referrerPolicy="no-referrer"
                 />
 
@@ -344,9 +346,10 @@ export function ReviewsSection({ onStartSaving }: ReviewsSectionProps) {
             {/* High-Resolution Screenshot Image Area */}
             <div className="flex-1 overflow-y-auto p-3 sm:p-5 bg-[#0C1B14] flex items-center justify-center min-h-[360px] max-h-[62vh]">
               <img
-                src={selectedReview.image}
+                src={optimizeCloudinary(selectedReview.image, 900)}
                 alt={selectedReview.title}
                 className="max-h-full max-w-full object-contain rounded-xl shadow-lg"
+                loading="lazy"
                 referrerPolicy="no-referrer"
               />
             </div>

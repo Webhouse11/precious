@@ -11,6 +11,7 @@ import {
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
 import { PageView } from '../../types';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 interface FooterProps {
   onNavigate: (page: PageView, sectionId?: string) => void;
@@ -29,9 +30,12 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
             <div className="flex items-center gap-3.5">
               <div className="w-14 h-14 rounded-2xl bg-white p-1 border-2 border-[#E2B13C]/60 shadow-lg flex items-center justify-center shrink-0 overflow-hidden">
                 <img
-                  src={BUSINESS_INFO.logo}
+                  src={optimizeCloudinary(BUSINESS_INFO.logo, 160)}
                   alt="Precious Gem Foods Ventures Official Logo"
                   className="w-full h-full object-contain rounded-xl"
+                  width={56}
+                  height={56}
+                  loading="lazy"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -289,11 +293,26 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
 
         {/* Bottom Strip */}
         <div className="pt-8 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-[#87A094]">
-          <p>
-            © 2026 {BUSINESS_INFO.name}. All rights reserved.
-          </p>
+          <div className="flex flex-col sm:flex-row items-center gap-1.5 sm:gap-2 text-center sm:text-left">
+            <p>
+              © 2026 {BUSINESS_INFO.name}. All rights reserved.
+            </p>
+            <span className="hidden sm:inline text-[#3F6150]">•</span>
+            <p className="text-[#A2B6AC]">
+              Website Designed & Developed by{' '}
+              <a 
+                href="https://webhousemedia.com.ng" 
+                target="_blank" 
+                rel="noopener noreferrer" 
+                className="text-[#E2B13C] hover:text-[#f3c861] font-medium underline underline-offset-2 transition-colors"
+                id="webhouse-media-credit"
+              >
+                Webhouse Media & Marketing Studio
+              </a>
+            </p>
+          </div>
 
-          <div className="flex flex-wrap items-center gap-6">
+          <div className="flex flex-wrap items-center justify-center gap-4 sm:gap-6">
             <button 
               onClick={onOpenTerms}
               className="hover:text-white transition-colors"

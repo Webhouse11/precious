@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Search, ShoppingBag, MessageSquare, Info } from 'lucide-react';
 import { PRODUCTS } from '../../data/mockData';
 import { Product } from '../../types';
-import { createWhatsAppUrl } from '../../utils/helpers';
+import { createWhatsAppUrl, optimizeCloudinary } from '../../utils/helpers';
 
 interface ProductsSectionProps {
   onEnquireProduct: (product: Product) => void;
@@ -93,10 +93,13 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
                 {/* Image Frame */}
                 <div className="relative h-48 sm:h-52 bg-[#F3EFE6] overflow-hidden">
                   <img
-                    src={product.image}
+                    src={optimizeCloudinary(product.image, 500)}
                     alt={product.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                    width={380}
+                    height={208}
                     loading="lazy"
+                    referrerPolicy="no-referrer"
                   />
                   <div className="absolute top-3 left-3">
                     <span className="px-2.5 py-1 rounded-full text-[10px] font-bold bg-[#1B4332]/90 text-white backdrop-blur-xs">

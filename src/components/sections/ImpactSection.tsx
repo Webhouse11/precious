@@ -1,4 +1,5 @@
 import { Lightbulb, CheckCircle2, ShieldCheck, HeartHandshake, Users, Sparkles } from 'lucide-react';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 export function ImpactSection() {
   const learningAreas = [
@@ -58,9 +59,12 @@ export function ImpactSection() {
         <div className="bg-[#FAF5EC] rounded-3xl p-6 sm:p-10 border border-[#E5DDD0] flex flex-col md:flex-row items-center gap-8">
           <div className="w-full md:w-1/3 rounded-2xl overflow-hidden shadow-md">
             <img
-              src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290184_fj91xb.jpg"
+              src={optimizeCloudinary("https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290184_fj91xb.jpg", 500)}
               alt="Community food distribution and welfare support"
               className="w-full h-56 object-cover"
+              width={400}
+              height={224}
+              loading="lazy"
               referrerPolicy="no-referrer"
             />
           </div>

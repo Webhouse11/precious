@@ -1,5 +1,6 @@
 import { ArrowRight, Sparkles, Check, Heart, Shield, Users } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 interface AboutSectionProps {
   onLearnMore: () => void;
@@ -27,18 +28,24 @@ export function AboutSection({ onLearnMore, onExplorePlans }: AboutSectionProps)
               {/* Official Brand Badge */}
               <div className="absolute -top-3 -right-3 sm:-top-4 sm:-right-4 z-20 w-16 h-16 sm:w-20 sm:h-20 rounded-2xl bg-white p-1.5 shadow-xl border-2 border-[#E2B13C] flex items-center justify-center">
                 <img
-                  src={BUSINESS_INFO.logo}
+                  src={optimizeCloudinary(BUSINESS_INFO.logo, 160)}
                   alt="Precious Gem Foods Ventures Seal"
                   className="w-full h-full object-contain rounded-xl"
+                  width={80}
+                  height={80}
+                  loading="lazy"
                   referrerPolicy="no-referrer"
                 />
               </div>
 
               <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <img 
-                  src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg" 
+                  src={optimizeCloudinary("https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg", 700)} 
                   alt="Quality food preparation and hygienic packaging at Precious Gem Foods Ventures"
                   className="w-full h-80 sm:h-96 object-cover"
+                  width={600}
+                  height={400}
+                  loading="lazy"
                   referrerPolicy="no-referrer"
                 />
               </div>
@@ -55,9 +62,12 @@ export function AboutSection({ onLearnMore, onExplorePlans }: AboutSectionProps)
                 <div className="flex items-center gap-3 pt-2.5 border-t border-[#2C5743]">
                   <div className="w-10 h-10 rounded-full overflow-hidden border-2 border-[#E2B13C] shrink-0 bg-white shadow-xs">
                     <img
-                      src={BUSINESS_INFO.founder.image}
+                      src={optimizeCloudinary(BUSINESS_INFO.founder.image, 120)}
                       alt={BUSINESS_INFO.founder.name}
                       className="w-full h-full object-cover object-top"
+                      width={40}
+                      height={40}
+                      loading="lazy"
                       referrerPolicy="no-referrer"
                     />
                   </div>

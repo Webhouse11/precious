@@ -1,5 +1,6 @@
 import { Sparkles, Heart, Award, Users, Compass, Target, CheckCircle2 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 export function FounderSection() {
   const passions = [
@@ -37,9 +38,12 @@ export function FounderSection() {
                   {/* Corner Brand Logo Badge */}
                   <div className="absolute top-3 right-3 z-20 w-11 h-11 rounded-xl bg-white p-1 shadow-md border border-[#E2B13C]/50 flex items-center justify-center">
                     <img
-                      src={BUSINESS_INFO.logo}
+                      src={optimizeCloudinary(BUSINESS_INFO.logo, 120)}
                       alt="PGFV Official Logo"
                       className="w-full h-full object-contain rounded-lg"
+                      width={44}
+                      height={44}
+                      loading="lazy"
                       referrerPolicy="no-referrer"
                     />
                   </div>
@@ -47,9 +51,12 @@ export function FounderSection() {
                   {/* Founder Image with optimal positioning */}
                   <div className="relative w-full aspect-[4/5] sm:h-[460px] overflow-hidden bg-[#ECE6DA]">
                     <img
-                      src={BUSINESS_INFO.founder.image}
+                      src={optimizeCloudinary(BUSINESS_INFO.founder.image, 600)}
                       alt={`${BUSINESS_INFO.founder.name} - ${BUSINESS_INFO.founder.title}`}
                       className="w-full h-full object-cover object-top group-hover:scale-[1.02] transition-transform duration-500 ease-out"
+                      width={460}
+                      height={575}
+                      loading="lazy"
                       referrerPolicy="no-referrer"
                     />
                   </div>

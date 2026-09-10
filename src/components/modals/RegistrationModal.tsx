@@ -17,7 +17,8 @@ import {
   saveRegistrationLocally, 
   createWhatsAppUrl, 
   PGFV_WHATSAPP_PHONE, 
-  PGFV_WHATSAPP_DISPLAY 
+  PGFV_WHATSAPP_DISPLAY,
+  optimizeCloudinary 
 } from '../../utils/helpers';
 
 interface RegistrationModalProps {
@@ -128,9 +129,12 @@ export function RegistrationModal({
           <div className="flex items-center gap-3">
             <div className="w-11 h-11 rounded-xl bg-white p-1 text-[#122A20] flex items-center justify-center font-bold shadow-xs border border-[#E2B13C]/60 shrink-0 overflow-hidden">
               <img
-                src={BUSINESS_INFO.logo}
+                src={optimizeCloudinary(BUSINESS_INFO.logo, 120)}
                 alt="PGFV Official Logo"
                 className="w-full h-full object-contain rounded-lg"
+                width={44}
+                height={44}
+                loading="lazy"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -184,9 +188,12 @@ export function RegistrationModal({
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-xl bg-white p-1 border border-[#E2B13C] shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
                       <img
-                        src={BUSINESS_INFO.logo}
+                        src={optimizeCloudinary(BUSINESS_INFO.logo, 100)}
                         alt="PGFV Official Logo"
                         className="w-full h-full object-contain rounded-lg"
+                        width={40}
+                        height={40}
+                        loading="lazy"
                         referrerPolicy="no-referrer"
                       />
                     </div>

@@ -1,4 +1,5 @@
 import { GraduationCap, BookOpen, Utensils, PiggyBank, ArrowRight, Lightbulb } from 'lucide-react';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 interface StudentFoodSectionProps {
   onEnquireStudents: () => void;
@@ -90,9 +91,12 @@ export function StudentFoodSection({ onEnquireStudents, onOpenRegister }: Studen
             <div className="lg:col-span-5">
               <div className="rounded-3xl overflow-hidden shadow-xl border-4 border-white bg-white">
                 <img
-                  src="https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg"
+                  src={optimizeCloudinary("https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg", 600)}
                   alt="Students and youth food packaging empowerment at PGFV"
                   className="w-full h-80 object-cover"
+                  width={500}
+                  height={320}
+                  loading="lazy"
                   referrerPolicy="no-referrer"
                 />
                 <div className="p-4 bg-[#1B4332] text-white text-center">

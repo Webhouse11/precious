@@ -10,6 +10,7 @@ import {
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
 import { PageView } from '../../types';
+import { optimizeCloudinary } from '../../utils/helpers';
 
 interface NavbarProps {
   currentPage: PageView;
@@ -68,9 +69,12 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
           >
             <div className="relative w-11 h-11 sm:w-13 sm:h-13 xl:w-14 xl:h-14 rounded-2xl bg-white p-1 shadow-sm border-2 border-[#E2B13C]/40 group-hover:border-[#E2B13C] group-hover:scale-105 transition-all flex items-center justify-center shrink-0 overflow-hidden">
               <img
-                src={BUSINESS_INFO.logo}
+                src={optimizeCloudinary(BUSINESS_INFO.logo, 160)}
                 alt="Precious Gem Foods Ventures Official Logo"
                 className="w-full h-full object-contain rounded-xl"
+                width={56}
+                height={56}
+                fetchPriority="high"
                 referrerPolicy="no-referrer"
               />
             </div>
@@ -229,9 +233,12 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
           <div className="flex items-center gap-3 pb-3 border-b border-[#EBE4D8]">
             <div className="w-11 h-11 rounded-xl bg-white p-1 border border-[#E2B13C]/50 shadow-xs flex items-center justify-center shrink-0 overflow-hidden">
               <img
-                src={BUSINESS_INFO.logo}
+                src={optimizeCloudinary(BUSINESS_INFO.logo, 120)}
                 alt="PGFV Official Logo"
                 className="w-full h-full object-contain rounded-lg"
+                width={44}
+                height={44}
+                loading="lazy"
                 referrerPolicy="no-referrer"
               />
             </div>

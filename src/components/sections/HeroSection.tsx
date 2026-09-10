@@ -16,7 +16,7 @@ import {
   Pause,
   Play
 } from 'lucide-react';
-import { createWhatsAppUrl } from '../../utils/helpers';
+import { createWhatsAppUrl, optimizeCloudinary } from '../../utils/helpers';
 
 interface HeroSectionProps {
   onStartSaving: (planId?: string) => void;
@@ -557,10 +557,13 @@ export function HeroSection({
                         initial={{ scale: 1.08, opacity: 0.8 }}
                         animate={{ scale: 1, opacity: 1 }}
                         transition={{ duration: 0.7, ease: 'easeOut' }}
-                        src={slide.image}
+                        src={optimizeCloudinary(slide.image, 900)}
                         alt={slide.tabLabel}
                         className="w-full h-full object-cover"
-                        loading="eager"
+                        loading={currentSlide === 0 ? "eager" : "lazy"}
+                        fetchPriority={currentSlide === 0 ? "high" : "auto"}
+                        width={600}
+                        height={400}
                         referrerPolicy="no-referrer"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-[#0F2B20]/85 via-black/20 to-transparent" />
