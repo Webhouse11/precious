@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://preciousgemfoods.com.ng/</loc>
     <lastmod>2026-09-10</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dhzouslh1/image/upload/v1788894865/1000289570_fkiaoo.jpg</image:loc>
+      <image:title>Precious Gem Foods Ventures Logo and Food Products</image:title>
+      <image:caption>Quality Food Solutions and Christmas Food Savings in Nigeria</image:caption>
+    </image:image>
   </url>
 </urlset>

@@ -16,9 +16,10 @@ interface NavbarProps {
   currentPage: PageView;
   onNavigate: (page: PageView, sectionId?: string) => void;
   onOpenRegister: (planId?: string) => void;
+  onOpenAnnouncement?: () => void;
 }
 
-export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps) {
+export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnouncement }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const handleNavClick = (page: PageView, sectionId?: string) => {
@@ -32,9 +33,14 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
       <div className="bg-[#1B4332] text-[#F4EBD9] text-xs py-1.5 px-4">
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2">
           <div className="flex items-center gap-2">
-            <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#E2B13C] text-[#1B4332]">
-              2026 SAVINGS ACTIVE
-            </span>
+            <button 
+              onClick={onOpenAnnouncement}
+              className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-[#E2B13C] text-[#1B4332] hover:bg-[#edd888] transition-colors cursor-pointer"
+              title="Click to view special announcement flyer"
+            >
+              <Sparkles className="w-2.5 h-2.5" />
+              <span>SPECIAL NOTICE</span>
+            </button>
             <span className="hidden sm:inline">
               PGFV Christmas Foodstuff Savings Plan: Start early, save gradually, celebrate better.
             </span>
@@ -42,7 +48,16 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister }: NavbarProps)
               PGFV Christmas Savings Plan Open
             </span>
           </div>
-          <div className="flex items-center gap-4 text-[11px]">
+          <div className="flex items-center gap-3 text-[11px]">
+            {onOpenAnnouncement && (
+              <button
+                onClick={onOpenAnnouncement}
+                className="text-[#E2B13C] hover:underline flex items-center gap-1 font-medium cursor-pointer"
+              >
+                <span>View Flyer</span>
+              </button>
+            )}
+            <span className="text-[#A2B6AC] hidden md:inline">•</span>
             <a 
               href={`tel:${BUSINESS_INFO.phone}`} 
               className="hover:text-white flex items-center gap-1 transition-colors"

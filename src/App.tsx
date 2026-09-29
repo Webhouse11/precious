@@ -1,9 +1,10 @@
-import { useState, lazy, Suspense } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { PageView, Service, SavingsPlan } from './types';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
 import { FloatingWhatsApp } from './components/layout/FloatingWhatsApp';
 import { StickyMobileCTA } from './components/layout/StickyMobileCTA';
+import { AnnouncementPopupModal } from './components/modals/AnnouncementPopupModal';
 
 // Immediate Above-The-Fold / Critical Sections
 import { HeroSection } from './components/sections/HeroSection';
@@ -50,6 +51,15 @@ export default function App() {
   const [selectedPlanId, setSelectedPlanId] = useState<string | undefined>(undefined);
   const [isTermsOpen, setIsTermsOpen] = useState(false);
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
+  const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
+
+  // Trigger popup when visitor lands on the website
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsAnnouncementOpen(true);
+    }, 600);
+    return () => clearTimeout(timer);
+  }, []);
 
   // Enquiry modal state
   const [enquiryConfig, setEnquiryConfig] = useState<{
@@ -123,6 +133,7 @@ export default function App() {
         currentPage={currentPage}
         onNavigate={handleNavigate}
         onOpenRegister={() => handleOpenRegister()}
+        onOpenAnnouncement={() => setIsAnnouncementOpen(true)}
       />
 
       {/* Main Content Flow */}
@@ -250,6 +261,12 @@ export default function App() {
       <StickyMobileCTA
         onStartSaving={() => handleOpenRegister()}
         onViewPlans={() => handleNavigate('savings', 'savings-options')}
+      />
+
+      {/* Special Announcement Popup Modal on Page Landing */}
+      <AnnouncementPopupModal
+        isOpen={isAnnouncementOpen}
+        onClose={() => setIsAnnouncementOpen(false)}
       />
 
       {/* Interactive Modals loaded on-demand */}
