@@ -3,8 +3,21 @@ import { Product, Service, SavingsPlan, FAQItem, CustomerReview } from '../types
 export const BUSINESS_INFO = {
   name: 'Precious Gem Foods Ventures (PGFV)',
   shortName: 'PGFV',
+  businessType: 'Food Solutions & Foodstuff Business',
   tagline: 'Quality • Integrity • Impact',
+  supportingMessage: 'A global priority to making cooking easier.',
   supportingStatement: 'Empowering Communities Through Food, Skills, and Services',
+  audiencesServed: [
+    'Individuals',
+    'Families',
+    'Students',
+    'Schools',
+    'Businesses',
+    'Organisations',
+    'Events',
+    'Communities',
+    'Social Initiatives'
+  ],
   logo: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788894865/1000289570_fkiaoo.jpg',
   phone: '09167621558',
   phoneInternational: '+2349167621558',
@@ -44,144 +57,130 @@ export const PRODUCTS: Product[] = [
     name: 'Beans Flour',
     category: 'FLOUR & MIXES',
     description: '100% pure, stoneless, peeled beans flour prepared hygienically. Perfect for instant smooth akara, moi-moi, and gbegiri.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
-    tag: 'Hygienically Processed'
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028667/1000335105_pclfl3.jpg',
+    tag: 'Official Price List',
+    priceDisplay: '500g: ₦2,300 | 1kg: ₦4,500 | 2kg: ₦8,500',
+    sizesDisplay: '500g, 1kg, 2kg (More Available on request.)'
   },
   {
     id: 'prod-puff-puff-mix',
     name: 'Puff Puff Mix',
     category: 'FLOUR & MIXES',
     description: 'Convenient, pre-measured puff puff flour blend with gentle aromatic sweetness for fluffy, golden pastries in minutes.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
-    tag: 'Quick Preparation'
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335100_jslgzj.jpg',
+    tag: 'Official Price List',
+    priceDisplay: '500g: ₦2,000 | 1kg: ₦4,000 | 2kg: ₦7,500',
+    sizesDisplay: '500g, 1kg, 2kg'
   },
   {
     id: 'prod-custard-powder',
     name: 'Custard Powder',
     category: 'FLOUR & MIXES',
-    description: 'Smooth, creamy, and fortified custard powder for family breakfasts, rich desserts, and student morning fuel.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
-    tag: 'Family Favourite'
-  },
-  {
-    id: 'prod-plantain-flour',
-    name: 'Plantain Flour',
-    category: 'FLOUR & MIXES',
-    description: 'Naturally dried unripe plantain flour, rich in dietary fiber and essential minerals. Excellent healthy swallow alternative.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
-    tag: 'Healthy Choice'
-  },
-  {
-    id: 'prod-yam-flour',
-    name: 'Yam Flour (Elubo)',
-    category: 'FLOUR & MIXES',
-    description: 'Authentic traditional brown yam flour for delicious, smooth amala. Thoroughly cleaned, dried, and fine-milled.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
-    tag: 'Traditional Quality'
+    description: 'Smooth, creamy, and fortified vanilla custard powder for family breakfasts, rich desserts, and student morning fuel.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028666/1000335102_clf86h.jpg',
+    tag: 'Official Price List',
+    priceDisplay: '250g: ₦1,300 | 400g: ₦2,000',
+    sizesDisplay: '250g, 400g'
   },
   {
     id: 'prod-catfish',
     name: 'Oven-Dried Catfish',
     category: 'PROTEINS',
     description: 'Neatly cleaned, gutted, and hygienically smoked oven-dried catfish. Sand-free, aromatic, and rich in natural flavour.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
-    tag: 'Sand-Free'
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028667/1000335106_xzmqgw.jpg',
+    tag: 'From ₦3,000 Upward',
+    priceDisplay: 'From ₦3,000 upward (Depends on size and quantity)',
+    sizesDisplay: 'Standard, Medium & Wholesale weights'
   },
   {
-    id: 'prod-ponmo-ijebu',
-    name: 'Neat Dried Ponmo Ijebu',
+    id: 'prod-fresh-dry-fish',
+    name: 'Hygienic Fresh Dry Fish',
     category: 'PROTEINS',
-    description: 'Carefully scrubbed, hygienically sun-dried Ponmo Ijebu. Expands beautifully during cooking with tender, chewy texture.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
-    tag: 'Clean & Safe'
-  },
-  {
-    id: 'prod-chin-chin',
-    name: 'Chin Chin',
-    category: 'SNACKS',
-    description: 'Crunchy, rich, buttery Nigerian chin chin with hints of nutmeg and milk. Ideal for quick bites, gifts, and souvenirs.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
-    tag: 'Crispy & Rich'
-  },
-  {
-    id: 'prod-garri',
-    name: 'Garri (White & Yellow)',
-    category: 'GRAINS & FOODSTUFF',
-    description: 'Well-fermented, finely sifted, crispy garri with delicious sourness. Free from grit or impurities; great for soaking or eba.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
-    tag: 'Grit-Free'
+    description: 'Cleanly processed, gutted, and sealed Fresh Dry Fish with authentic savory aroma for pepper soups and native delicacies.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028668/1000335111_sl8bw2.jpg',
+    tag: 'From ₦3,000 Upward',
+    priceDisplay: 'From ₦3,000 upward',
+    sizesDisplay: 'Regular & Family Packs'
   },
   {
     id: 'prod-rice',
-    name: 'Premium Rice',
+    name: 'PGFV Premium Parboiled Rice',
     category: 'GRAINS & FOODSTUFF',
-    description: 'Stoneless, cleanly bagged long-grain parboiled rice. Cooks firm and non-sticky for classic jollof and fried rice.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937287/1000290187_vwyuyg.jpg',
-    tag: 'Stoneless Rice'
+    description: 'Stoneless, cleanly bagged long-grain parboiled rice branded by Precious Gem Food Ventures. Cooks firm and non-sticky.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028667/1000335104_b8g1hi.jpg',
+    tag: 'Stoneless Rice',
+    priceDisplay: 'Request Price',
+    sizesDisplay: '1 Congo, 5kg, 10kg, 25kg, 50kg'
   },
   {
-    id: 'prod-honey-beans',
-    name: 'Neatly Picked Honey Beans (Oloyin)',
+    id: 'prod-garri',
+    name: 'Crisp Drinking & Eba Garri (Ijebu)',
     category: 'GRAINS & FOODSTUFF',
-    description: 'Cleanly sorted, naturally sweet brown honey beans (Oloyin). Free from weevils and dirt, ready for boiling.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290177_yo7qcp.jpg',
-    tag: 'Pest-Free'
+    description: 'Well-fermented, finely sifted, crispy Garri Ijebu with delicious sourness. Free from grit or impurities; great for soaking or eba.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028667/1000335103_b3vmzj.jpg',
+    tag: 'Grit-Free & Crispy',
+    priceDisplay: 'Request Price',
+    sizesDisplay: '1 Congo, Paint Rubber, 50kg Bag'
   },
   {
-    id: 'prod-wheat-flour',
-    name: 'Wheat Flour',
-    category: 'FLOUR & MIXES',
-    description: 'Whole grain and all-purpose wheat flours for pastries, breads, and healthy homemade swallow doughs.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
-    tag: 'High Grade'
-  },
-  {
-    id: 'prod-buns-mix',
-    name: 'Buns Mix',
-    category: 'FLOUR & MIXES',
-    description: 'Balanced flour formulation for soft-centered Nigerian buns with a crisp golden exterior. Simple just-add-water ease.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
-    tag: 'Easy Bake'
-  },
-  {
-    id: 'prod-cooking-oils',
-    name: 'Cooking Oils (Vegetable & Pure Palm Oil)',
+    id: 'prod-household-box',
+    name: 'PGFV Household Foodstuff Essential Box',
     category: 'GRAINS & FOODSTUFF',
-    description: 'Unadulterated red palm oil with rich earthy aroma, and cholesterol-free double-refined vegetable cooking oil.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
-    tag: 'Pure & Fresh'
+    description: 'Full provisions basket: parboiled rice, Garri Ijebu, puff puff mix, Nasco cornflakes, King’s vegetable oil, Indomie, and milk.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335099_rbutlc.jpg',
+    tag: 'Household Essential',
+    priceDisplay: 'Request Price',
+    sizesDisplay: 'Starter, Standard & Mega Sustenance'
   },
   {
-    id: 'prod-yam',
-    name: 'Select Food Yams',
+    id: 'prod-student-package',
+    name: 'Student Semester Food Package',
     category: 'GRAINS & FOODSTUFF',
-    description: 'Dry, mature yam tubers carefully chosen for pounding and boiling with high starch density and pure white flesh.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
-    tag: 'Farm Select'
+    description: 'Affordable campus food bundle: Honey Beans, Three Crowns milk, Titus fish, Nasco cornflakes, flours, and staple foodstuffs.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335101_tqfagd.jpg',
+    tag: 'Hostel Delivery',
+    priceDisplay: 'Starting from ₦6,000',
+    sizesDisplay: 'Campus Starter, Sustenance & Mega Care'
   },
   {
-    id: 'prod-chicken-beef',
-    name: 'Chicken / Beef Portions',
-    category: 'PROTEINS',
-    description: 'Hygienically handled and frozen/preserved protein cuts prepared to order for festive packages and family cooking.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937285/1000290178_fu4s2m.jpg',
-    tag: 'Hygienic Sourcing'
+    id: 'prod-small-chops',
+    name: 'Event Small Chops & Gourmet Snack Packs',
+    category: 'SNACKS',
+    description: 'Foil takeout containers packed with assorted finger foods: hot puff puff, samosas, spring rolls, and peppered bites.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028664/1000335095_rmxsk4.jpg',
+    tag: 'Fresh To Order',
+    priceDisplay: 'Request Price',
+    sizesDisplay: 'Mini, Standard, Premium per person'
   },
   {
-    id: 'prod-drinks',
-    name: 'Packaged Drinks & Beverages',
-    category: 'DRINKS',
-    description: 'Quality fruit juices, malt drinks, and wholesome beverages supplied for events, hampers, and family celebration packages.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290184_fj91xb.jpg',
-    tag: 'Festive Ready'
+    id: 'prod-food-souvenirs',
+    name: 'Celebration Food Souvenir & Gift Package',
+    category: 'SNACKS',
+    description: 'Aesthetic, high-utility food gift bags containing dry foodstuffs, signature flours, and gourmet treats for celebrations.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028643/1000335093_cavnkr.jpg',
+    tag: 'Useful Event Gifting',
+    priceDisplay: 'Request Price',
+    sizesDisplay: 'Batches of 50, 100, 250+ Guests'
   },
   {
-    id: 'prod-snacks-other',
-    name: 'Assorted Gourmet Snacks & Other Food Items',
+    id: 'prod-hangout-packs',
+    name: 'The Hangout Meal & Snack Packs',
     category: 'OTHER',
-    description: 'Groundnuts, plantain chips, packaged local condiments, and seasonal foodstuffs available upon special request.',
-    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg',
-    tag: 'Seasonal Stock'
+    description: 'Hygienically portioned event meal and snack boxes in sealed aluminum containers with custom branding labels.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028643/1000335094_cndfrx.jpg',
+    tag: 'Event Ready Packs',
+    priceDisplay: 'Request Price',
+    sizesDisplay: 'Individual & Group Batches'
+  },
+  {
+    id: 'prod-beans-flour-pouch',
+    name: 'Beans Flour (Sealed Stand-up Pouch)',
+    category: 'FLOUR & MIXES',
+    description: '100% pure peeled beans flour sealed in airtight retail pouches for fluffy akara and smooth moi-moi.',
+    image: 'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335098_vaje9l.jpg',
+    tag: 'Official Price List',
+    priceDisplay: '500g: ₦2,300 | 1kg: ₦4,500 | 2kg: ₦8,500',
+    sizesDisplay: '500g, 1kg, 2kg'
   }
 ];
 

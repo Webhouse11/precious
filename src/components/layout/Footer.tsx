@@ -53,12 +53,12 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
               {BUSINESS_INFO.tagline}
             </div>
 
-            <p className="text-sm text-[#A8BEB4] leading-relaxed max-w-sm">
-              “{BUSINESS_INFO.supportingStatement}”
+            <p className="text-sm font-semibold text-[#E2B13C] italic leading-relaxed max-w-sm">
+              “{BUSINESS_INFO.supportingMessage}”
             </p>
 
             <p className="text-xs text-[#87A094] leading-relaxed">
-              A modern Nigerian food solutions and empowerment enterprise making quality foodstuffs accessible, hygienically packaged, and convenient to plan for.
+              Precious Gem Foods Ventures (PGFV) is a food solutions and foodstuff enterprise providing hygienic, stone-free foodstuffs, custom packages, and transparent supply systems for individuals, families, students, schools, businesses, organisations, events, communities, and social initiatives.
             </p>
 
             {/* Social Icons */}
@@ -126,7 +126,7 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
                   onClick={() => onNavigate('services', 'services-section')}
                   className="hover:text-white transition-colors text-left"
                 >
-                  All Services
+                  Services & Food Solutions
                 </button>
               </li>
               <li>

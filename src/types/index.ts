@@ -6,6 +6,8 @@ export interface Product {
   image: string;
   packagingDetails?: string;
   tag?: string;
+  priceDisplay?: string;
+  sizesDisplay?: string;
 }
 
 export interface Service {
@@ -58,6 +60,8 @@ export interface CustomerReview {
 export type PageView = 
   | 'home'
   | 'about'
+  | 'catalogue'
+  | 'events-snacks'
   | 'products'
   | 'services'
   | 'savings'

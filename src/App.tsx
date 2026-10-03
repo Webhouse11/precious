@@ -11,9 +11,11 @@ import { HeroSection } from './components/sections/HeroSection';
 import { AboutSection } from './components/sections/AboutSection';
 import { WhyPGFVSection } from './components/sections/WhyPGFVSection';
 import { ServicesSection } from './components/sections/ServicesSection';
+import { ServicesDirectorySection } from './components/sections/ServicesDirectorySection';
 import { ChristmasSavingsSection } from './components/sections/ChristmasSavingsSection';
 
 // Lazy Loaded Below-The-Fold Sections for maximum initial load performance
+const ProductsSection = lazy(() => import('./components/sections/ProductsSection').then(m => ({ default: m.ProductsSection })));
 const SavingsOptionsSection = lazy(() => import('./components/sections/SavingsOptionsSection').then(m => ({ default: m.SavingsOptionsSection })));
 const SavingsCalculatorSection = lazy(() => import('./components/sections/SavingsCalculatorSection').then(m => ({ default: m.SavingsCalculatorSection })));
 const HowItWorksSection = lazy(() => import('./components/sections/HowItWorksSection').then(m => ({ default: m.HowItWorksSection })));
@@ -28,6 +30,9 @@ const PartnershipsSection = lazy(() => import('./components/sections/Partnership
 const FAQSection = lazy(() => import('./components/sections/FAQSection').then(m => ({ default: m.FAQSection })));
 const FinalCTASection = lazy(() => import('./components/sections/FinalCTASection').then(m => ({ default: m.FinalCTASection })));
 const ContactSection = lazy(() => import('./components/sections/ContactSection').then(m => ({ default: m.ContactSection })));
+const StudentFoodPackagesPage = lazy(() => import('./components/students/StudentFoodPackagesPage').then(m => ({ default: m.StudentFoodPackagesPage })));
+const CataloguePage = lazy(() => import('./components/catalogue/CataloguePage').then(m => ({ default: m.CataloguePage })));
+const EventSnackPackagesPage = lazy(() => import('./components/events/EventSnackPackagesPage').then(m => ({ default: m.EventSnackPackagesPage })));
 
 // Lazy Loaded Modals (only loaded when user triggers them)
 const RegistrationModal = lazy(() => import('./components/modals/RegistrationModal').then(m => ({ default: m.RegistrationModal })));
@@ -44,7 +49,84 @@ function SectionLoader() {
 }
 
 export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageView>('home');
+  const [currentPage, setCurrentPage] = useState<PageView>(() => {
+    if (typeof window !== 'undefined') {
+      const path = window.location.pathname;
+      const hash = window.location.hash;
+      if (path === '/student-food-packages' || hash === '#student-food-packages' || hash === '#student-solutions') {
+        return 'students';
+      }
+      if (path === '/catalogue' || hash === '#catalogue' || hash === '#products') {
+        return 'catalogue';
+      }
+      if (path === '/event-snack-packages' || hash === '#event-snack-packages' || hash === '#event-packages' || hash === '#snacks') {
+        return 'events-snacks';
+      }
+    }
+    return 'home';
+  });
+
+  // Dynamic SEO Title & Meta sync
+  useEffect(() => {
+    if (currentPage === 'students') {
+      document.title = 'Student Food Packages in Ile-Ife | Precious Gem Foods Ventures';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Affordable and convenient student food packages from Precious Gem Foods Ventures. Choose a package, customise your budget and enquire about delivery to your school, hostel or location.'
+        );
+      }
+    } else if (currentPage === 'catalogue') {
+      document.title = 'Product & Package Catalogue | Precious Gem Foods Ventures';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Browse PGFV Product & Package Catalogue: pure peeled beans flour, puff puff mix, custard powder, oven-dried catfish, staple grains, and food boxes with transparent pricing in Ile-Ife.'
+        );
+      }
+    } else if (currentPage === 'events-snacks') {
+      document.title = 'Event & Snack Packages | Small Chops & Pastries | PGFV Ile-Ife';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Freshly prepared event snack packages, small chops, puff puff, chin chin, and Chapman for student hangouts, meetings, church programs, birthdays, and conferences in Ile-Ife.'
+        );
+      }
+    } else {
+      document.title = 'Precious Gem Foods Ventures | Food Solutions & Quality Foodstuffs';
+      const metaDesc = document.querySelector('meta[name="description"]');
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Precious Gem Foods Ventures (PGFV) is a food solutions and foodstuff enterprise: Quality • Integrity • Impact — “A global priority to making cooking easier.” Providing practical food solutions for individuals, families, students, schools, businesses, organisations, events, and communities.'
+        );
+      }
+    }
+  }, [currentPage]);
+
+  // Handle browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      if (typeof window !== 'undefined') {
+        const path = window.location.pathname;
+        const hash = window.location.hash;
+        if (path === '/student-food-packages' || hash === '#student-food-packages') {
+          setCurrentPage('students');
+        } else if (path === '/catalogue' || hash === '#catalogue') {
+          setCurrentPage('catalogue');
+        } else if (path === '/event-snack-packages' || hash === '#event-snack-packages') {
+          setCurrentPage('events-snacks');
+        } else {
+          setCurrentPage('home');
+        }
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   // Modals state
   const [isRegisterOpen, setIsRegisterOpen] = useState(false);
@@ -74,12 +156,33 @@ export default function App() {
 
   const handleNavigate = (page: PageView, sectionId?: string) => {
     setCurrentPage(page);
-    if (sectionId) {
-      const el = document.getElementById(sectionId);
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth' });
-        return;
+    if (typeof window !== 'undefined') {
+      if (page === 'students') {
+        if (window.location.pathname !== '/student-food-packages') {
+          window.history.pushState(null, '', '/student-food-packages');
+        }
+      } else if (page === 'catalogue') {
+        if (window.location.pathname !== '/catalogue') {
+          window.history.pushState(null, '', '/catalogue');
+        }
+      } else if (page === 'events-snacks') {
+        if (window.location.pathname !== '/event-snack-packages') {
+          window.history.pushState(null, '', '/event-snack-packages');
+        }
+      } else {
+        if (window.location.pathname !== '/') {
+          window.history.pushState(null, '', '/');
+        }
       }
+    }
+    if (sectionId) {
+      setTimeout(() => {
+        const el = document.getElementById(sectionId);
+        if (el) {
+          el.scrollIntoView({ behavior: 'smooth' });
+          return;
+        }
+      }, 70);
     }
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -94,6 +197,10 @@ export default function App() {
   };
 
   const handleSelectService = (service: Service) => {
+    if (service.id === 'serv-student-packages') {
+      handleNavigate('students');
+      return;
+    }
     setEnquiryConfig({
       isOpen: true,
       title: `Enquire About ${service.title}`,
@@ -112,12 +219,7 @@ export default function App() {
   };
 
   const handleOpenStudentEnquiry = () => {
-    setEnquiryConfig({
-      isOpen: true,
-      title: 'Enquire About Student Food Packages',
-      category: 'Student Food Packages',
-      itemName: 'Student Semester Food Package'
-    });
+    handleNavigate('students');
   };
 
   const handleStartWithCalculatedAmount = (weeklyAmount: number) => {
@@ -138,113 +240,180 @@ export default function App() {
 
       {/* Main Content Flow */}
       <main className="flex-1 pb-16 lg:pb-0">
-        
-        {/* 2. Hero 5-Service Slider: PLAN AHEAD. SAVE GRADUALLY. CELEBRATE BETTER. */}
-        <HeroSection
-          onStartSaving={(planId) => handleOpenRegister(planId)}
-          onExplorePlans={() => handleNavigate('savings', 'savings-options')}
-          onOpenCalculator={() => handleNavigate('savings', 'savings-calculator-section')}
-          onOpenPreferences={() => handleNavigate('savings', 'food-preference')}
-          onOpenCorporate={handleOpenCorporateQuotation}
-          onOpenStudent={handleOpenStudentEnquiry}
-          onOpenServiceEnquiry={(serviceTitle, category) => {
-            setEnquiryConfig({
-              isOpen: true,
-              title: `Enquire About ${serviceTitle}`,
-              category: category,
-              itemName: serviceTitle
-            });
-          }}
-          onOpenPartnership={() => handleNavigate('partnerships', 'partnerships-section')}
-        />
+        {currentPage === 'students' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <StudentFoodPackagesPage
+              onNavigate={handleNavigate}
+              onOpenSavingsRegister={() => handleOpenRegister('plan-2000')}
+            />
+          </Suspense>
+        ) : currentPage === 'catalogue' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <CataloguePage
+              onNavigateHome={() => handleNavigate('home')}
+              onNavigateToServices={() => handleNavigate('services', 'services-section')}
+              onNavigateToEvents={() => handleNavigate('events-snacks')}
+            />
+          </Suspense>
+        ) : currentPage === 'events-snacks' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <EventSnackPackagesPage
+              onNavigateHome={() => handleNavigate('home')}
+              onNavigateToCatalogue={() => handleNavigate('catalogue')}
+              onNavigateToServices={() => handleNavigate('services', 'services-section')}
+            />
+          </Suspense>
+        ) : (
+          <>
+            {/* 2. Hero 5-Service Slider: PLAN AHEAD. SAVE GRADUALLY. CELEBRATE BETTER. */}
+            <HeroSection
+              onStartSaving={(planId) => handleOpenRegister(planId)}
+              onExplorePlans={() => handleNavigate('savings', 'savings-options')}
+              onOpenCalculator={() => handleNavigate('savings', 'savings-calculator-section')}
+              onOpenPreferences={() => handleNavigate('savings', 'food-preference')}
+              onOpenCorporate={handleOpenCorporateQuotation}
+              onOpenStudent={handleOpenStudentEnquiry}
+              onOpenServiceEnquiry={(serviceTitle, category) => {
+                setEnquiryConfig({
+                  isOpen: true,
+                  title: `Enquire About ${serviceTitle}`,
+                  category: category,
+                  itemName: serviceTitle
+                });
+              }}
+              onOpenPartnership={() => handleNavigate('partnerships', 'partnerships-section')}
+            />
 
-        {/* 3. About PGFV */}
-        <AboutSection
-          onLearnMore={() => handleNavigate('about', 'founder-section')}
-          onExplorePlans={() => handleNavigate('savings', 'savings-options')}
-        />
+            {/* 3. About PGFV */}
+            <AboutSection
+              onLearnMore={() => handleNavigate('about', 'founder-section')}
+              onExplorePlans={() => handleNavigate('savings', 'savings-options')}
+            />
 
-        {/* 4. Why PGFV */}
-        <WhyPGFVSection />
+            {/* 4. Why PGFV */}
+            <WhyPGFVSection />
 
-        {/* 5. Services */}
-        <ServicesSection
-          onSelectService={handleSelectService}
-        />
+            {/* 5. Food Solutions (7 Core Categories) */}
+            <ServicesSection
+              onSelectService={(serviceTitle, category) => {
+                setEnquiryConfig({
+                  isOpen: true,
+                  title: `Enquire About ${serviceTitle}`,
+                  category: category,
+                  itemName: serviceTitle
+                });
+              }}
+              onNavigateToStudents={() => handleNavigate('students')}
+              onNavigateToSavings={() => handleNavigate('savings', 'savings-options')}
+              onNavigateToEvents={() => handleNavigate('events-snacks')}
+              onNavigateToCatalogue={() => handleNavigate('catalogue')}
+            />
 
-        {/* 6. Christmas Savings Plan Flagship */}
-        <ChristmasSavingsSection
-          onStartSaving={() => handleOpenRegister()}
-          onScrollToOptions={() => handleNavigate('savings', 'savings-options')}
-        />
+            {/* 6. Specialized Services Directory (12 Services with Distinct Purpose) */}
+            <ServicesDirectorySection
+              onOpenEnquiry={(serviceTitle, category) => {
+                setEnquiryConfig({
+                  isOpen: true,
+                  title: `Enquire About ${serviceTitle}`,
+                  category: category,
+                  itemName: serviceTitle
+                });
+              }}
+              onNavigateToSavings={() => handleNavigate('savings', 'savings-options')}
+              onNavigateToStudents={() => handleNavigate('students')}
+              onNavigateToEvents={() => handleNavigate('events-snacks')}
+              onNavigateToCatalogue={() => handleNavigate('catalogue')}
+            />
 
-        <Suspense fallback={<SectionLoader />}>
-          {/* 7. Savings Options */}
-          <SavingsOptionsSection
-            onSelectPlan={handleSelectPlan}
-            onAskMonthly={() => {
-              setEnquiryConfig({
-                isOpen: true,
-                title: 'Monthly Savings Plan Enquiry',
-                category: 'Christmas Savings Plan (Monthly Option)',
-                itemName: 'Monthly Upfront Payment Option'
-              });
-            }}
-          />
+            {/* 7. Christmas Savings Plan Flagship */}
+            <ChristmasSavingsSection
+              onStartSaving={() => handleOpenRegister()}
+              onScrollToOptions={() => handleNavigate('savings', 'savings-options')}
+            />
 
-          {/* 8. Savings Calculator */}
-          <SavingsCalculatorSection
-            onStartWithAmount={handleStartWithCalculatedAmount}
-          />
+            <Suspense fallback={<SectionLoader />}>
+              {/* Featured Food Products Showcase (Flours, Grains, Dried Fish, Mixes) */}
+              <ProductsSection
+                onEnquireProduct={(product) => {
+                  setEnquiryConfig({
+                    isOpen: true,
+                    title: `Enquire About ${product.name}`,
+                    category: product.category,
+                    itemName: product.name
+                  });
+                }}
+                onNavigateToCatalogue={() => handleNavigate('catalogue')}
+              />
 
-          {/* 9. How It Works (Timeline, 7 Steps, Late Joining, Accountability) */}
-          <HowItWorksSection
-            onStartSaving={() => handleOpenRegister()}
-            onContactAssistance={() => handleNavigate('contact', 'contact-section')}
-          />
+              {/* 7. Savings Options */}
+              <SavingsOptionsSection
+                onSelectPlan={handleSelectPlan}
+                onAskMonthly={() => {
+                  setEnquiryConfig({
+                    isOpen: true,
+                    title: 'Monthly Savings Plan Enquiry',
+                    category: 'Christmas Savings Plan (Monthly Option)',
+                    itemName: 'Monthly Upfront Payment Option'
+                  });
+                }}
+              />
 
-          {/* 10. What You Receive */}
-          <WhatYouReceiveSection />
+              {/* 8. Savings Calculator */}
+              <SavingsCalculatorSection
+                onStartWithAmount={handleStartWithCalculatedAmount}
+              />
 
-          {/* 11. Food Preference */}
-          <FoodPreferenceSection />
+              {/* 9. How It Works (Timeline, 7 Steps, Late Joining, Accountability) */}
+              <HowItWorksSection
+                onStartSaving={() => handleOpenRegister()}
+                onContactAssistance={() => handleNavigate('contact', 'contact-section')}
+              />
 
-          {/* 12. Founder */}
-          <FounderSection />
+              {/* 10. What You Receive */}
+              <WhatYouReceiveSection />
 
-          {/* 13. Student Food Solutions */}
-          <StudentFoodSection
-            onEnquireStudents={handleOpenStudentEnquiry}
-            onOpenRegister={() => handleOpenRegister('plan-2000')}
-          />
+              {/* 11. Food Preference */}
+              <FoodPreferenceSection />
 
-          {/* 14. Customer Reviews Showcase (Tagged REVIEWS with smooth scrolling marquee) */}
-          <ReviewsSection 
-            onStartSaving={() => handleOpenRegister()}
-          />
+              {/* 12. Founder */}
+              <FounderSection />
 
-          {/* 15. Corporate & Christmas Packages */}
-          <CorporatePackagesSection
-            onRequestQuotation={handleOpenCorporateQuotation}
-          />
+              {/* 13. Student Food Solutions */}
+              <StudentFoodSection
+                onEnquireStudents={handleOpenStudentEnquiry}
+                onOpenRegister={() => handleOpenRegister('plan-2000')}
+                onExploreAllPackages={() => handleNavigate('students')}
+              />
 
-          {/* 16. Impact */}
-          <ImpactSection />
+              {/* 14. Customer Reviews Showcase (Tagged REVIEWS with smooth scrolling marquee) */}
+              <ReviewsSection 
+                onStartSaving={() => handleOpenRegister()}
+              />
 
-          {/* 17. Partnerships */}
-          <PartnershipsSection />
+              {/* 15. Corporate & Christmas Packages */}
+              <CorporatePackagesSection
+                onRequestQuotation={handleOpenCorporateQuotation}
+              />
 
-          {/* 18. FAQ */}
-          <FAQSection />
+              {/* 16. Impact */}
+              <ImpactSection />
 
-          {/* 19. Final CTA */}
-          <FinalCTASection
-            onStartSaving={() => handleOpenRegister()}
-          />
+              {/* 17. Partnerships */}
+              <PartnershipsSection />
 
-          {/* 20. Contact */}
-          <ContactSection />
-        </Suspense>
+              {/* 18. FAQ */}
+              <FAQSection />
+
+              {/* 19. Final CTA */}
+              <FinalCTASection
+                onStartSaving={() => handleOpenRegister()}
+              />
+
+              {/* 20. Contact */}
+              <ContactSection />
+            </Suspense>
+          </>
+        )}
       </main>
 
       {/* Footer */}
@@ -259,8 +428,13 @@ export default function App() {
       <FloatingWhatsApp />
       
       <StickyMobileCTA
+        currentPage={currentPage}
         onStartSaving={() => handleOpenRegister()}
         onViewPlans={() => handleNavigate('savings', 'savings-options')}
+        onOrderStudentPackage={() => {
+          const el = document.getElementById('student-order-form-section');
+          if (el) el.scrollIntoView({ behavior: 'smooth' });
+        }}
       />
 
       {/* Special Announcement Popup Modal on Page Landing */}

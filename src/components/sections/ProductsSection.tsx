@@ -1,14 +1,15 @@
 import { useState } from 'react';
-import { Search, ShoppingBag, MessageSquare, Info } from 'lucide-react';
+import { Search, ShoppingBag, MessageSquare, Info, ArrowRight, Tag } from 'lucide-react';
 import { PRODUCTS } from '../../data/mockData';
 import { Product } from '../../types';
 import { createWhatsAppUrl, optimizeCloudinary } from '../../utils/helpers';
 
 interface ProductsSectionProps {
   onEnquireProduct: (product: Product) => void;
+  onNavigateToCatalogue?: () => void;
 }
 
-export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
+export function ProductsSection({ onEnquireProduct, onNavigateToCatalogue }: ProductsSectionProps) {
   const [selectedCategory, setSelectedCategory] = useState<string>('ALL');
   const [searchQuery, setSearchQuery] = useState<string>('');
 
@@ -29,8 +30,9 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
     return matchesCategory && matchesSearch;
   });
 
-  const handleQuickWhatsApp = (productName: string) => {
-    const text = `Hello Precious Gem Foods Ventures, I would like to enquire about the price and availability of ${productName}.`;
+  const handleQuickWhatsApp = (productName: string, priceDisplay?: string) => {
+    const priceText = priceDisplay ? ` (Price: ${priceDisplay})` : '';
+    const text = `Hello Precious Gem Foods Ventures, I would like to enquire about the price and availability of ${productName}${priceText}.`;
     window.open(createWhatsAppUrl(text), '_blank');
   };
 
@@ -39,7 +41,7 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Section Header */}
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-10 gap-6">
+        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-6">
           <div className="max-w-2xl">
             <span className="text-xs font-bold uppercase tracking-widest text-[#C68A1B] block mb-2">
               HYGIENICALLY PROCESSED & PACKAGED
@@ -52,17 +54,49 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
             </p>
           </div>
 
-          {/* Search bar */}
-          <div className="w-full md:w-72 relative">
-            <Search className="w-4 h-4 text-[#7B8B82] absolute left-3.5 top-1/2 -translate-y-1/2" />
-            <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#D5CCBE] bg-white text-xs sm:text-sm text-[#143527] focus:outline-none focus:border-[#1B4332] shadow-xs"
-            />
+          {/* Search bar & Catalogue Link */}
+          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+            {onNavigateToCatalogue && (
+              <button
+                type="button"
+                onClick={onNavigateToCatalogue}
+                className="px-4 py-2.5 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white text-xs font-bold flex items-center justify-center gap-2 shadow-xs transition-all whitespace-nowrap cursor-pointer"
+              >
+                <span>Full Product Catalogue</span>
+                <ArrowRight className="w-3.5 h-3.5 text-[#E2B13C]" />
+              </button>
+            )}
+
+            <div className="w-full sm:w-64 relative">
+              <Search className="w-4 h-4 text-[#7B8B82] absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-[#D5CCBE] bg-white text-xs sm:text-sm text-[#143527] focus:outline-none focus:border-[#1B4332] shadow-xs"
+              />
+            </div>
           </div>
+        </div>
+
+        {/* Price List Spotlight Banner */}
+        <div className="mb-8 p-4 rounded-2xl bg-[#FAF5EC] border border-[#E2DDD3] flex flex-col md:flex-row items-start md:items-center justify-between gap-3 text-xs text-[#143527]">
+          <div className="flex items-start sm:items-center gap-2">
+            <Tag className="w-4 h-4 text-[#C68A1B] shrink-0 mt-0.5 sm:mt-0" />
+            <span className="font-medium">
+              <strong>Official Price List:</strong> Beans Flour (₦2,300/500g, ₦4,500/1kg, ₦8,500/2kg) • Puff Puff Mix (₦2,000/500g, ₦4,000/1kg, ₦7,500/2kg) • Custard Powder (₦1,300/250g, ₦2,000/400g) • Oven-Dried Catfish (From ₦3,000 upward). Unpriced items quoted on market rates.
+            </span>
+          </div>
+          {onNavigateToCatalogue && (
+            <button
+              onClick={onNavigateToCatalogue}
+              className="text-xs font-bold text-[#1B4332] hover:underline flex items-center gap-1 shrink-0 cursor-pointer"
+            >
+              <span>Explore Catalogue</span>
+              <ArrowRight className="w-3.5 h-3.5 text-[#E2B13C]" />
+            </button>
+          )}
         </div>
 
         {/* Category Filter Pills */}
@@ -117,17 +151,26 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
 
                 {/* Product Content */}
                 <div className="p-5">
-                  <h3 className="font-heading font-bold text-base sm:text-lg text-[#143527] mb-1.5">
+                  <h3 className="font-heading font-bold text-base sm:text-lg text-[#143527] mb-1">
                     {product.name}
                   </h3>
-                  <p className="text-xs text-[#5C6A63] leading-relaxed line-clamp-3 mb-3">
+
+                  {/* Price display badge */}
+                  <div className="mb-2">
+                    <span className="text-xs font-bold text-[#1B4332] bg-[#FAF5EC] px-2 py-0.5 rounded-md border border-[#E2DDD3] inline-block">
+                      {product.priceDisplay || 'Request Price'}
+                    </span>
+                  </div>
+
+                  <p className="text-xs text-[#5C6A63] leading-relaxed line-clamp-2 mb-3">
                     {product.description}
                   </p>
 
-                  <div className="inline-flex items-center gap-1.5 text-[11px] text-[#78695A] bg-[#F7F4EE] px-2.5 py-1 rounded-lg border border-[#EDE7DB]">
-                    <Info className="w-3.5 h-3.5 text-[#C68A1B]" />
-                    <span>Contact us for availability and current pricing</span>
-                  </div>
+                  {product.sizesDisplay && (
+                    <div className="text-[11px] text-[#697A71] mb-2">
+                      <span className="font-semibold text-[#143527]">Options:</span> {product.sizesDisplay}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -137,12 +180,12 @@ export function ProductsSection({ onEnquireProduct }: ProductsSectionProps) {
                   onClick={() => onEnquireProduct(product)}
                   className="w-full py-2 px-3 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white text-xs font-semibold flex items-center justify-center gap-1.5 shadow-xs transition-colors"
                 >
-                  <ShoppingBag className="w-3.5 h-3.5" />
-                  <span>Enquire Now</span>
+                  <ShoppingBag className="w-3.5 h-3.5 text-[#E2B13C]" />
+                  <span>{product.priceDisplay && !product.priceDisplay.includes('Request') ? 'Enquire / Order' : 'Make an Enquiry'}</span>
                 </button>
 
                 <button
-                  onClick={() => handleQuickWhatsApp(product.name)}
+                  onClick={() => handleQuickWhatsApp(product.name, product.priceDisplay)}
                   className="w-full py-2 px-2.5 rounded-xl border border-[#25D366] text-[#14833c] hover:bg-[#25D366]/10 text-xs font-semibold flex items-center justify-center gap-1 transition-colors"
                   title="Enquire on WhatsApp"
                 >

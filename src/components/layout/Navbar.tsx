@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { 
   Phone, 
   Menu, 
@@ -6,9 +6,14 @@ import {
   Sparkles, 
   ShoppingBag, 
   Calendar, 
-  ChevronRight
+  ChevronRight,
+  ChevronDown,
+  ChevronUp,
+  Package,
+  ArrowRight
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { ALL_PGFV_SERVICES } from '../../data/servicesData';
 import { PageView } from '../../types';
 import { optimizeCloudinary } from '../../utils/helpers';
 
@@ -21,10 +26,47 @@ interface NavbarProps {
 
 export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnouncement }: NavbarProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [servicesDropdownOpen, setServicesDropdownOpen] = useState(false);
+  const [mobileServicesExpanded, setMobileServicesExpanded] = useState(false);
+  const dropdownRef = useRef<HTMLDivElement>(null);
+
+  // Close dropdown on click outside
+  useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target as Node)) {
+        setServicesDropdownOpen(false);
+      }
+    };
+    if (servicesDropdownOpen) {
+      document.addEventListener('mousedown', handleOutsideClick);
+    }
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [servicesDropdownOpen]);
 
   const handleNavClick = (page: PageView, sectionId?: string) => {
-    onNavigate(page, sectionId);
+    setServicesDropdownOpen(false);
     setMobileMenuOpen(false);
+    onNavigate(page, sectionId);
+  };
+
+  const handleSelectService = (slug: string) => {
+    setServicesDropdownOpen(false);
+    setMobileMenuOpen(false);
+    if (slug === 'student-food-packages') {
+      onNavigate('students');
+      return;
+    }
+    if (slug === 'event-souvenirs' || slug === 'event-snack-packages') {
+      onNavigate('events-snacks');
+      return;
+    }
+    if (slug === 'food-packages') {
+      onNavigate('catalogue');
+      return;
+    }
+    onNavigate('services', `service-${slug}`);
   };
 
   return (
@@ -42,10 +84,10 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
               <span>SPECIAL NOTICE</span>
             </button>
             <span className="hidden sm:inline">
-              PGFV Christmas Foodstuff Savings Plan: Start early, save gradually, celebrate better.
+              Quality • Integrity • Impact — “A global priority to making cooking easier.”
             </span>
             <span className="sm:hidden">
-              PGFV Christmas Savings Plan Open
+              PGFV Food Solutions & Foodstuffs
             </span>
           </div>
           <div className="flex items-center gap-3 text-[11px]">
@@ -54,7 +96,7 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
                 onClick={onOpenAnnouncement}
                 className="text-[#E2B13C] hover:underline flex items-center gap-1 font-medium cursor-pointer"
               >
-                <span>View Flyer</span>
+                <span>Special Notice</span>
               </button>
             )}
             <span className="text-[#A2B6AC] hidden md:inline">•</span>
@@ -103,16 +145,16 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
                 </span>
               </div>
               <p className="text-[10px] sm:text-[11px] tracking-wider text-[#736357] font-semibold uppercase leading-tight mt-0.5 whitespace-nowrap">
-                Quality Food Solutions • Ile-Ife
+                Food Solutions & Foodstuffs • Ile-Ife
               </p>
             </div>
           </button>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-0.5 xl:gap-1.5">
+          <nav className="hidden lg:flex items-center gap-1 xl:gap-2">
             <button
               onClick={() => handleNavClick('home')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
                 currentPage === 'home' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
@@ -122,7 +164,7 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             </button>
             <button
               onClick={() => handleNavClick('about', 'about-pgfv')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
                 currentPage === 'about' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
@@ -130,44 +172,127 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             >
               About Us
             </button>
+
+            {/* Professional Product / Package Catalogue */}
             <button
-              onClick={() => handleNavClick('services', 'services-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
-                currentPage === 'services' 
-                  ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
+              onClick={() => handleNavClick('catalogue')}
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                currentPage === 'catalogue' 
+                  ? 'text-[#1B4332] bg-[#EFE9DF] font-bold shadow-2xs' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
               }`}
             >
-              Products & Services
+              <span>Catalogue</span>
+              <span className="text-[9px] font-bold px-1.5 py-0.2 rounded bg-[#E2B13C]/20 text-[#1B4332] border border-[#E2B13C]/40">
+                New
+              </span>
             </button>
-            
-            {/* Christmas Savings Plan (Highlighted) */}
+
+            {/* Consolidated Services Menu with Dropdown (Contains All Services & Solutions) */}
+            <div className="relative" ref={dropdownRef}>
+              <button
+                type="button"
+                onClick={() => setServicesDropdownOpen(!servicesDropdownOpen)}
+                className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 cursor-pointer ${
+                  servicesDropdownOpen || currentPage === 'services'
+                    ? 'text-[#1B4332] bg-[#EFE9DF] font-bold shadow-2xs'
+                    : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
+                }`}
+                id="services-menu-dropdown-btn"
+                aria-expanded={servicesDropdownOpen}
+                aria-haspopup="true"
+              >
+                <span>Our Services</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform duration-200 ${servicesDropdownOpen ? 'rotate-180 text-[#1B4332]' : 'text-[#7D8F85]'}`} />
+              </button>
+
+              {/* Dropdown Menu Window */}
+              {servicesDropdownOpen && (
+                <div 
+                  className="absolute top-full left-0 mt-2 w-80 sm:w-96 bg-white rounded-2xl shadow-2xl border border-[#E3DCD0] py-2 z-50 animate-in fade-in zoom-in-95 duration-150"
+                  role="menu"
+                  aria-orientation="vertical"
+                >
+                  <div className="px-4 py-2.5 bg-[#FAF7F2] border-b border-[#F0EAE0] rounded-t-2xl flex items-center justify-between">
+                    <div>
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-[#C68A1B] block">
+                        PGFV Specialized Services
+                      </span>
+                      <span className="text-xs font-heading font-extrabold text-[#143527]">
+                        Choose from 12 Offerings
+                      </span>
+                    </div>
+                    <button
+                      onClick={() => {
+                        setServicesDropdownOpen(false);
+                        onNavigate('services', 'services-section');
+                      }}
+                      className="text-[11px] font-bold text-[#1B4332] hover:underline flex items-center gap-1 cursor-pointer"
+                    >
+                      <span>View All Services</span>
+                      <ArrowRight className="w-3 h-3 text-[#E2B13C]" />
+                    </button>
+                  </div>
+
+                  <div className="max-h-[65vh] overflow-y-auto py-1 divide-y divide-[#F7F3EC] custom-scrollbar">
+                    {ALL_PGFV_SERVICES.map((serv, idx) => (
+                      <button
+                        key={serv.id}
+                        onClick={() => handleSelectService(serv.slug)}
+                        className="w-full px-4 py-2.5 text-left hover:bg-[#FAF7F2] transition-colors flex items-start gap-3 group cursor-pointer"
+                        role="menuitem"
+                      >
+                        <div className="relative w-9 h-9 rounded-lg overflow-hidden bg-[#FAF5EC] border border-[#E8E1D5] shrink-0 mt-0.5 group-hover:border-[#1B4332] transition-colors shadow-2xs">
+                          <img
+                            src={optimizeCloudinary(serv.image, 100)}
+                            alt={serv.title}
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            loading="lazy"
+                          />
+                          <span className="absolute bottom-0 right-0 px-1 text-[8px] font-mono font-bold bg-[#1B4332]/85 text-[#E2B13C] rounded-tl">
+                            {idx + 1 < 10 ? `0${idx + 1}` : idx + 1}
+                          </span>
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <span className="text-xs font-bold text-[#143527] group-hover:text-[#1B4332] block truncate">
+                            {serv.title}
+                          </span>
+                          <span className="text-[11px] text-[#55665D] line-clamp-1">
+                            {serv.shortDescription}
+                          </span>
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="px-4 py-2.5 bg-[#FAF7F2] border-t border-[#F0EAE0] rounded-b-2xl flex items-center justify-between text-[11px]">
+                    <span className="text-[#687B72]">Quick WhatsApp Help</span>
+                    <a
+                      href={`tel:${BUSINESS_INFO.phone}`}
+                      className="font-bold text-[#1B4332] hover:underline"
+                    >
+                      {BUSINESS_INFO.phone}
+                    </a>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Dedicated Event & Snack Packages Link */}
             <button
-              onClick={() => handleNavClick('savings', 'savings-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium flex items-center gap-1.5 transition-colors whitespace-nowrap ${
-                currentPage === 'savings' 
-                  ? 'text-[#1B4332] bg-[#E2B13C]/25 border border-[#E2B13C]/50 font-bold' 
-                  : 'text-[#1B4332] bg-[#E2B13C]/10 border border-[#E2B13C]/30 hover:bg-[#E2B13C]/20 font-semibold'
+              onClick={() => handleNavClick('events-snacks')}
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+                currentPage === 'events-snacks' 
+                  ? 'text-[#1B4332] bg-[#EFE9DF] font-bold shadow-2xs' 
+                  : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
               }`}
             >
-              <Calendar className="w-3.5 h-3.5 text-[#C68A1B]" />
-              <span>Christmas Savings</span>
-              <span className="w-2 h-2 rounded-full bg-[#E2B13C] animate-pulse"></span>
+              <span>Event & Snacks</span>
             </button>
 
             <button
-              onClick={() => handleNavClick('students', 'student-solutions')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
-                currentPage === 'students' 
-                  ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
-                  : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
-              }`}
-            >
-              Student Packages
-            </button>
-            <button
               onClick={() => handleNavClick('reviews', 'reviews-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
                 currentPage === 'reviews' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-bold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
@@ -179,18 +304,18 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
               </span>
             </button>
             <button
-              onClick={() => handleNavClick('impact', 'impact-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
-                currentPage === 'impact' 
+              onClick={() => handleNavClick('partnerships', 'partnerships-section')}
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
+                currentPage === 'partnerships' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
               }`}
             >
-              Community Impact
+              Partnerships
             </button>
             <button
               onClick={() => handleNavClick('faq', 'faq-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
                 currentPage === 'faq' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
@@ -200,7 +325,7 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             </button>
             <button
               onClick={() => handleNavClick('contact', 'contact-section')}
-              className={`px-2.5 xl:px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
+              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap ${
                 currentPage === 'contact' 
                   ? 'text-[#1B4332] bg-[#EFE9DF] font-semibold' 
                   : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
@@ -285,25 +410,42 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             >
               About Us
             </button>
+
+            {/* Catalogue button in mobile */}
             <button
-              onClick={() => handleNavClick('services', 'services-section')}
-              className="text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
+              onClick={() => handleNavClick('catalogue')}
+              className="col-span-2 text-left px-3.5 py-2.5 text-sm font-bold text-[#143527] bg-[#E2B13C]/20 border border-[#E2B13C]/40 hover:bg-[#E2B13C]/30 rounded-xl flex items-center justify-between"
             >
-              Products & Services
+              <div className="flex items-center gap-2">
+                <ShoppingBag className="w-4 h-4 text-[#C68A1B]" />
+                <span>Product & Package Catalogue</span>
+              </div>
+              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#1B4332] text-white">
+                New
+              </span>
             </button>
+
+            {/* Event & Snacks button in mobile */}
             <button
-              onClick={() => handleNavClick('savings', 'savings-section')}
-              className="text-left px-3 py-2 text-sm font-semibold text-[#1B4332] bg-[#E2B13C]/20 rounded-lg flex items-center gap-1.5"
+              onClick={() => handleNavClick('events-snacks')}
+              className="col-span-2 text-left px-3.5 py-2.5 text-sm font-semibold text-[#143527] bg-[#FAF5EC] border border-[#E8E1D5] hover:bg-[#EFE9DF] rounded-xl flex items-center justify-between"
             >
-              <Calendar className="w-3.5 h-3.5 text-[#C68A1B]" />
-              <span>Christmas Savings</span>
+              <span>Event & Snack Packages (Small Chops & Drinks)</span>
+              <span className="text-xs font-bold text-[#C68A1B]">Order</span>
             </button>
+
+            {/* Consolidated Services Button */}
             <button
-              onClick={() => handleNavClick('students', 'student-solutions')}
-              className="text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
+              onClick={() => setMobileServicesExpanded(!mobileServicesExpanded)}
+              className="col-span-2 text-left px-3.5 py-2.5 text-sm font-semibold text-[#1B4332] bg-[#FAF5EC] border border-[#E8E1D5] hover:bg-[#EFE9DF] rounded-xl flex items-center justify-between shadow-2xs"
             >
-              Student Packages
+              <div className="flex items-center gap-2">
+                <span className="w-2 h-2 rounded-full bg-[#E2B13C]"></span>
+                <span>Our Services (All 12 Offerings & Solutions)</span>
+              </div>
+              <ChevronDown className={`w-4 h-4 text-[#1B4332] transition-transform ${mobileServicesExpanded ? 'rotate-180' : ''}`} />
             </button>
+
             <button
               onClick={() => handleNavClick('reviews', 'reviews-section')}
               className="text-left px-3 py-2 text-sm font-semibold text-[#1B4332] bg-[#E2B13C]/15 rounded-lg flex items-center justify-between"
@@ -312,12 +454,6 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
               <span className="text-[10px] font-bold px-2 py-0.5 rounded-full bg-[#1B4332] text-[#E2B13C]">
                 5.0 ★
               </span>
-            </button>
-            <button
-              onClick={() => handleNavClick('impact', 'impact-section')}
-              className="text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
-            >
-              Community Impact
             </button>
             <button
               onClick={() => handleNavClick('about', 'founder-section')}
@@ -339,11 +475,47 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             </button>
             <button
               onClick={() => handleNavClick('contact', 'contact-section')}
-              className="text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
+              className="col-span-2 text-left px-3 py-2 text-sm font-medium text-[#3E4540] hover:bg-[#EFE9DF] rounded-lg"
             >
               Contact Us
             </button>
           </div>
+
+          {/* Expanded Mobile Services Accordion */}
+          {mobileServicesExpanded && (
+            <div className="bg-[#FAF7F2] p-3 rounded-2xl border border-[#E8E1D5] space-y-1.5 animate-in fade-in duration-150">
+              <div className="flex items-center justify-between pb-1.5 border-b border-[#E0D7C9]">
+                <span className="text-[11px] font-bold uppercase tracking-wider text-[#C68A1B]">
+                  PGFV Specialized Services
+                </span>
+                <span className="text-[10px] text-[#627269]">
+                  Select service to view
+                </span>
+              </div>
+              <div className="max-h-60 overflow-y-auto divide-y divide-[#EFEAE0]">
+                {ALL_PGFV_SERVICES.map((serv, sIdx) => (
+                  <button
+                    key={serv.id}
+                    onClick={() => handleSelectService(serv.slug)}
+                    className="w-full py-2 px-2 text-left hover:bg-white rounded-lg flex items-center gap-2.5 text-xs font-semibold text-[#143527] transition-colors"
+                  >
+                    <div className="w-7 h-7 rounded-md overflow-hidden bg-[#EFEAE0] shrink-0 border border-[#E5DDD0]">
+                      <img
+                        src={optimizeCloudinary(serv.image, 80)}
+                        alt={serv.title}
+                        className="w-full h-full object-cover"
+                        loading="lazy"
+                      />
+                    </div>
+                    <span className="truncate flex-1">{serv.title}</span>
+                    <span className="text-[10px] font-mono text-[#8C9B93] shrink-0">
+                      {sIdx + 1 < 10 ? `0${sIdx + 1}` : sIdx + 1}
+                    </span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="pt-2">
             <button

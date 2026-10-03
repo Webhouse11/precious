@@ -42,15 +42,18 @@ export function WhyPGFVSection() {
   return (
     <section className="py-16 sm:py-20 bg-[#F5EFE6] border-b border-[#E8E2D5]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="text-center max-w-2xl mx-auto mb-12">
-          <span className="text-xs font-bold uppercase tracking-widest text-[#726354] block mb-2">
-            THE FIVE CORE PILLARS
+        <div className="text-center max-w-3xl mx-auto mb-12">
+          <span className="text-xs font-bold uppercase tracking-widest text-[#C68A1B] block mb-2">
+            QUALITY • INTEGRITY • IMPACT
           </span>
           <h2 className="font-heading font-extrabold text-2xl sm:text-4xl text-[#143527]">
-            WHY CHOOSE PGFV?
+            WHY CHOOSE PRECIOUS GEM FOODS VENTURES?
           </h2>
-          <p className="text-sm sm:text-base text-[#56655D] mt-3">
-            More than a food vendor — we provide dependable solutions that make everyday nourishment and festive planning simpler for everyone.
+          <p className="text-base sm:text-lg font-semibold text-[#1B4332] italic mt-2">
+            “A global priority to making cooking easier.”
+          </p>
+          <p className="text-xs sm:text-sm text-[#56655D] mt-2 max-w-2xl mx-auto">
+            PGFV provides practical, stone-free foodstuffs, custom packaging, and transparent supply systems. Whether you are an individual cook, a busy student, a growing family, a corporate employer, or a community organisation, we eliminate market stress with dependable food solutions.
           </p>
         </div>
 
@@ -81,6 +84,26 @@ export function WhyPGFVSection() {
               </div>
             );
           })}
+        </div>
+
+        {/* Important Business Clarity Card */}
+        <div className="mt-10 p-5 rounded-2xl bg-white border border-[#E3DCD0] shadow-xs flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+          <div className="space-y-1">
+            <span className="text-[11px] font-bold text-[#C68A1B] uppercase tracking-wider block">
+              CLEAR BUSINESS DEFINITION
+            </span>
+            <h4 className="font-heading font-bold text-sm sm:text-base text-[#143527]">
+              Precious Gem Foods Ventures (PGFV) is a Food Solutions & Foodstuff Business
+            </h4>
+            <p className="text-xs text-[#5E6D65] max-w-2xl">
+              We are not a cooked-food restaurant, not solely a Christmas savings company, and not just a snack business. We provide hygienic, stone-free staple foodstuffs, custom bundles, private packaging, and community savings programmes for individuals, families, students, schools, businesses, organisations, events, communities, and social initiatives.
+            </p>
+          </div>
+          <div className="shrink-0 flex items-center gap-2">
+            <span className="text-xs font-bold text-[#1B4332] bg-[#FAF5EC] px-3.5 py-2 rounded-xl border border-[#E2B13C]/40">
+              Quality • Integrity • Impact
+            </span>
+          </div>
         </div>
       </div>
     </section>

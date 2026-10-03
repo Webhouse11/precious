@@ -4,9 +4,10 @@ import { optimizeCloudinary } from '../../utils/helpers';
 interface StudentFoodSectionProps {
   onEnquireStudents: () => void;
   onOpenRegister: () => void;
+  onExploreAllPackages?: () => void;
 }
 
-export function StudentFoodSection({ onEnquireStudents, onOpenRegister }: StudentFoodSectionProps) {
+export function StudentFoodSection({ onEnquireStudents, onOpenRegister, onExploreAllPackages }: StudentFoodSectionProps) {
   const benefits = [
     {
       title: 'Practical Food Packages',
@@ -71,17 +72,17 @@ export function StudentFoodSection({ onEnquireStudents, onOpenRegister }: Studen
 
               <div className="pt-3 flex flex-wrap items-center gap-3">
                 <button
-                  onClick={onEnquireStudents}
-                  className="px-6 py-3 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white font-bold text-xs uppercase tracking-wider shadow transition-all flex items-center gap-2"
-                  id="enquire-student-packages-btn"
+                  onClick={onExploreAllPackages || onEnquireStudents}
+                  className="px-6 py-3.5 rounded-xl bg-[#1B4332] hover:bg-[#143527] text-white font-bold text-xs uppercase tracking-wider shadow-md hover:shadow-lg transition-all flex items-center gap-2 cursor-pointer"
+                  id="explore-all-student-packages-btn"
                 >
-                  <span>ENQUIRE ABOUT STUDENT PACKAGES</span>
+                  <span>EXPLORE STUDENT PACKAGES (₦6k, ₦10k, ₦15k & CUSTOM)</span>
                   <ArrowRight className="w-4 h-4 text-[#E2B13C]" />
                 </button>
 
                 <button
                   onClick={onOpenRegister}
-                  className="px-6 py-3 rounded-xl bg-white hover:bg-[#FAF7F2] text-[#1B4332] border border-[#D5CCBE] font-bold text-xs uppercase tracking-wider transition-all"
+                  className="px-5 py-3.5 rounded-xl bg-white hover:bg-[#FAF7F2] text-[#1B4332] border border-[#D5CCBE] font-bold text-xs uppercase tracking-wider transition-all cursor-pointer"
                 >
                   Join ₦2,000 Weekly Plan
                 </button>

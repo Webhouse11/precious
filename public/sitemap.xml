@@ -3,13 +3,24 @@
         xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">
   <url>
     <loc>https://preciousgemfoods.com.ng/</loc>
-    <lastmod>2026-09-10</lastmod>
+    <lastmod>2026-10-03</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
     <image:image>
       <image:loc>https://res.cloudinary.com/dhzouslh1/image/upload/v1788894865/1000289570_fkiaoo.jpg</image:loc>
       <image:title>Precious Gem Foods Ventures Logo and Food Products</image:title>
       <image:caption>Quality Food Solutions and Christmas Food Savings in Nigeria</image:caption>
+    </image:image>
+  </url>
+  <url>
+    <loc>https://preciousgemfoods.com.ng/student-food-packages</loc>
+    <lastmod>2026-10-03</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.9</priority>
+    <image:image>
+      <image:loc>https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290176_j1a30q.jpg</image:loc>
+      <image:title>Student Food Packages in Ile-Ife | Precious Gem Foods Ventures</image:title>
+      <image:caption>Affordable and convenient student food packages from Precious Gem Foods Ventures delivered across campus hostels</image:caption>
     </image:image>
   </url>
 </urlset>

@@ -13,6 +13,7 @@ import {
   Gift,
   Tag,
   Users,
+  Package,
   Pause,
   Play
 } from 'lucide-react';
@@ -45,25 +46,94 @@ export function HeroSection({
 
   const SLIDE_DURATION = 6500; // ms
 
-  // 5 Specialized Service Slides for PGFV
+  // 5 Specialized Service & Solutions Slides for PGFV
   const slides = [
-    // Slide 1: Christmas Foodstuff Savings Plan
+    // Slide 1: Food Solutions & Quality Foodstuffs (Primary Brand Anchor)
+    {
+      id: 'food-solutions-foodstuffs',
+      tabLabel: '01. Food Solutions',
+      serviceTag: 'FOOD SOLUTIONS & QUALITY FOODSTUFFS',
+      headlinePrefix: 'FOOD SOLUTIONS.',
+      headlineAccent: 'QUALITY FOODSTUFFS.',
+      headlineSuffix: 'EASIER COOKING.',
+      subtitle:
+        'Precious Gem Foods Ventures (PGFV) provides quality, stone-free food products and practical foodstuff solutions designed to make cooking easier for individuals, families, students, schools, businesses, and communities.',
+      primaryBtnText: 'EXPLORE FOOD SOLUTIONS',
+      primaryAction: () => {
+        const el = document.getElementById('services-section');
+        if (el) el.scrollIntoView({ behavior: 'smooth' });
+      },
+      primaryIcon: Package,
+      secondaryBtnText: 'CHAT ON WHATSAPP',
+      secondaryAction: () => {
+        window.open(createWhatsAppUrl('Hello PGFV, I would like to enquire about your food solutions and foodstuff supplies.'), '_blank');
+      },
+      image:
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335096_z0acdh.jpg',
+      imageBadge: 'Food Solutions & Foodstuffs',
+      badgeHighlight: 'Hygienically Packed',
+      cardTitle: 'PGFV FOODSTUFF SOLUTIONS',
+      cardItems: [
+        { label: 'Stoneless Flours', val: 'Pure Beans & Yam', color: 'text-[#1B4332]' },
+        { label: 'Selected Grains', val: 'Parboiled Rice & Garri', color: 'text-[#C68A1B]' },
+        { label: 'Dried Proteins', val: 'Catfish & Ponmo', color: 'text-[#1B4332]' }
+      ],
+      features: [
+        'Hygienically sorted, stone-free and grit-free staple foodstuffs',
+        'Custom portions and bulk supplies for households, schools & businesses',
+        'Doorstep delivery across Ile-Ife, Osun State, and nationwide logistics'
+      ]
+    },
+
+    // Slide 2: Student Food Packages & Campus Solutions
+    {
+      id: 'service-student-packages',
+      tabLabel: '02. Student Packages',
+      serviceTag: 'SERVICE 02 • STUDENT FOOD PACKAGES & CAMPUS SOLUTIONS',
+      headlinePrefix: 'STUDENT PACKAGES.',
+      headlineAccent: 'CAMPUS MEALS.',
+      headlineSuffix: 'HOSTEL DELIVERY.',
+      subtitle:
+        'Affordable and convenient foodstuff packages portioned for students and campus residences in Ile-Ife and across Osun State, with flexible custom budgets and direct hostel delivery.',
+      primaryBtnText: 'EXPLORE STUDENT PACKS',
+      primaryAction: () => (onOpenStudent ? onOpenStudent() : onStartSaving('plan-2000')),
+      primaryIcon: GraduationCap,
+      secondaryBtnText: 'REQUEST CUSTOM BUDGET',
+      secondaryAction: () => (onOpenStudent ? onOpenStudent() : onStartSaving('plan-2000')),
+      image:
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028665/1000335098_vaje9l.jpg',
+      imageBadge: 'Campus Welfare Solution',
+      badgeHighlight: 'Hostel-Ready Portions',
+      cardTitle: 'STUDENT CARE HIGHLIGHTS',
+      cardItems: [
+        { label: 'Stone-Free Grains', val: 'Clean Staples', color: 'text-[#1B4332]' },
+        { label: 'Packages From', val: '₦6,000 / Custom', color: 'text-[#C68A1B]' },
+        { label: 'Campus Delivery', val: 'Hostels & Halls', color: 'text-[#1B4332]' }
+      ],
+      features: [
+        'Pre-cleaned beans flour, garri, rice, noodles & cooking oils',
+        'Custom budget options (e.g. ₦8,500, ₦12,000) tailored to your needs',
+        'Direct campus hostel delivery in Ile-Ife & surrounding institutions'
+      ]
+    },
+
+    // Slide 3: Christmas Foodstuff Savings Plan (Flagship Community Programme)
     {
       id: 'service-christmas-savings',
-      tabLabel: '01. Christmas Savings',
-      serviceTag: 'SERVICE 01 • CHRISTMAS FOODSTUFF SAVINGS PLAN',
+      tabLabel: '03. Christmas Savings',
+      serviceTag: 'FLAGSHIP PROGRAMME • CHRISTMAS FOODSTUFF SAVINGS PLAN',
       headlinePrefix: 'PLAN AHEAD.',
       headlineAccent: 'SAVE GRADUALLY.',
       headlineSuffix: 'CELEBRATE BETTER.',
       subtitle:
-        'Beat the December price rush with Nigeria\'s most transparent Christmas Foodstuff Savings initiative. Save weekly (₦2,000–₦15,000) or upfront monthly from September 1st, 2026, and secure your household festive food package stress-free.',
-      primaryBtnText: 'START SAVING NOW',
-      primaryAction: () => onStartSaving(),
+        'One of PGFV\'s signature annual programmes. Beat the December price rush with Nigeria\'s most transparent Christmas Foodstuff Savings initiative. Save weekly (₦2,000–₦15,000) or upfront monthly towards your household festive food package.',
+      primaryBtnText: 'EXPLORE SAVINGS PLANS',
+      primaryAction: () => onExplorePlans(),
       primaryIcon: Calendar,
-      secondaryBtnText: 'EXPLORE 5 TIERS',
-      secondaryAction: () => onExplorePlans(),
+      secondaryBtnText: 'START SAVING NOW',
+      secondaryAction: () => onStartSaving(),
       image:
-        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937287/1000290187_vwyuyg.jpg',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028643/1000335094_cndfrx.jpg',
       imageBadge: 'Flagship Food Savings',
       badgeHighlight: 'From ₦2,000 / Week',
       cardTitle: '2026 SAVINGS MILESTONES',
@@ -73,54 +143,22 @@ export function HeroSection({
         { label: 'Delivery Begins', val: 'Dec 21, 2026', color: 'text-[#1B4332]' }
       ],
       features: [
-        '5 flexible weekly tiers + monthly advance option',
+        '5 flexible weekly tiers + monthly upfront payment option',
         'Verifiable Digital Savings Card with unique Participant ID',
-        'Reliable doorstep delivery or coordinated pickup'
+        'Reliable doorstep delivery or coordinated festive pickup'
       ]
     },
 
-    // Slide 2: Student Food Packages & Campus Solutions
-    {
-      id: 'service-student-packages',
-      tabLabel: '02. Student Packages',
-      serviceTag: 'SERVICE 02 • STUDENT FOOD PACKAGES & CAMPUS SOLUTIONS',
-      headlinePrefix: 'PLAN AHEAD.',
-      headlineAccent: 'SAVE GRADUALLY.',
-      headlineSuffix: 'CELEBRATE BETTER.',
-      subtitle:
-        'Nutritious, easy-to-cook food packs tailored for campus undergraduates, polytechnic scholars, and busy student hostels. Flexible semester installments let you eat well and stay energized for exams.',
-      primaryBtnText: 'ENQUIRE STUDENT PACKS',
-      primaryAction: () => (onOpenStudent ? onOpenStudent() : onStartSaving('plan-2000')),
-      primaryIcon: GraduationCap,
-      secondaryBtnText: 'JOIN ₦2,000 / WK PLAN',
-      secondaryAction: () => onStartSaving('plan-2000'),
-      image:
-        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290174_bppwgo.jpg',
-      imageBadge: 'Campus Welfare Solution',
-      badgeHighlight: 'Hostel-Ready Portions',
-      cardTitle: 'STUDENT CARE HIGHLIGHTS',
-      cardItems: [
-        { label: 'Stone-Free Grains', val: 'Clean Staples', color: 'text-[#1B4332]' },
-        { label: 'Semester Budget', val: '₦2,000 / wk', color: 'text-[#C68A1B]' },
-        { label: 'Campus Pickup', val: 'Ife & Beyond', color: 'text-[#1B4332]' }
-      ],
-      features: [
-        'Pre-cleaned, stone-free beans, garri, rice & quick flours',
-        'Pocket-friendly progressive payments across the semester',
-        'Direct campus hostels & student union collection points'
-      ]
-    },
-
-    // Slide 3: Employee / Corporate Packages & Christmas Hampers
+    // Slide 4: Employee / Corporate Packages & Christmas Hampers
     {
       id: 'service-corporate-hampers',
-      tabLabel: '03. Corporate Hampers',
-      serviceTag: 'SERVICE 03 • CORPORATE PACKAGES & CHRISTMAS HAMPERS',
-      headlinePrefix: 'PLAN AHEAD.',
-      headlineAccent: 'SAVE GRADUALLY.',
-      headlineSuffix: 'CELEBRATE BETTER.',
+      tabLabel: '04. Corporate Hampers',
+      serviceTag: 'SERVICE 04 • CORPORATE PACKAGES & CHRISTMAS HAMPERS',
+      headlinePrefix: 'CORPORATE WELFARE.',
+      headlineAccent: 'BESPOKE HAMPERS.',
+      headlineSuffix: 'BULK SUPPLY.',
       subtitle:
-        'Premium food packages and luxury Christmas gift hampers for organizations, employers, churches, and executive partners. Reward your hardworking team with wholesome, hygienic foodstuffs that every family appreciates.',
+        'Premium food packages and luxury Christmas gift hampers for organizations, employers, schools, churches, and executive partners. Reward your hardworking team with wholesome, hygienic foodstuffs that every family appreciates.',
       primaryBtnText: 'REQUEST QUOTATION',
       primaryAction: () => (onOpenCorporate ? onOpenCorporate() : onStartSaving()),
       primaryIcon: Gift,
@@ -129,7 +167,7 @@ export function HeroSection({
         window.open(createWhatsAppUrl('Hello PGFV, I would like to request a corporate quotation for staff food packages and Christmas hampers.'), '_blank');
       },
       image:
-        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290188_licuvk.jpg',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028668/1000335113_qb1p3o.jpg',
       imageBadge: 'Corporate & Staff Welfare',
       badgeHighlight: 'Custom Invoicing',
       cardTitle: 'CORPORATE ADVANTAGES',
@@ -145,66 +183,25 @@ export function HeroSection({
       ]
     },
 
-    // Slide 4: Private Labelling & Contract Packaging
+    // Slide 5: Private Labelling, Events & Community Initiatives
     {
-      id: 'service-private-labelling',
-      tabLabel: '04. Private Labelling',
-      serviceTag: 'SERVICE 04 • PRIVATE LABELLING & CONTRACT PACKAGING',
-      headlinePrefix: 'PLAN AHEAD.',
-      headlineAccent: 'SAVE GRADUALLY.',
-      headlineSuffix: 'CELEBRATE BETTER.',
+      id: 'service-souvenirs-outreach',
+      tabLabel: '05. Private Labelling & Events',
+      serviceTag: 'SERVICE 05 • PRIVATE LABELLING, EVENTS & EMPOWERMENT',
+      headlinePrefix: 'PRIVATE LABELLING.',
+      headlineAccent: 'EVENT SOUVENIRS.',
+      headlineSuffix: 'COMMUNITY IMPACT.',
       subtitle:
-        'Elevate your food brand with PGFV\'s professional contract packaging. We clean, process, weigh, and seal premium flours, grains, and dry proteins with your custom logo, brand labels, and retail packaging.',
-      primaryBtnText: 'ENQUIRE PRIVATE LABELLING',
+        'Hygienic contract food packaging for retailers, thoughtful food souvenirs for weddings and celebrations, plus transparent charity distribution and practical empowerment training.',
+      primaryBtnText: 'EVENT & LABELLING ENQUIRY',
       primaryAction: () => {
         if (onOpenServiceEnquiry) {
           onOpenServiceEnquiry('Private Labelling & Contract Packaging', 'Private Labelling');
         } else {
-          window.open(createWhatsAppUrl('Hello PGFV, I am interested in your Private Labelling and Contract Packaging services.'), '_blank');
+          window.open(createWhatsAppUrl('Hello PGFV, I am interested in Private Labelling and Event Souvenirs.'), '_blank');
         }
       },
       primaryIcon: Tag,
-      secondaryBtnText: 'WHY CHOOSE PGFV',
-      secondaryAction: () => {
-        const el = document.getElementById('why-pgfv');
-        if (el) el.scrollIntoView({ behavior: 'smooth' });
-      },
-      image:
-        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937286/1000290185_fvcxhq.jpg',
-      imageBadge: 'Supermarkets & Retailers',
-      badgeHighlight: 'Your Brand On Pack',
-      cardTitle: 'PACKAGING STANDARDS',
-      cardItems: [
-        { label: 'Airtight Pouch', val: 'Tamper-Proof', color: 'text-[#1B4332]' },
-        { label: 'NAFDAC Aligned', val: 'Strict Hygiene', color: 'text-[#C68A1B]' },
-        { label: 'Scalable Orders', val: 'Small & Large', color: 'text-[#1B4332]' }
-      ],
-      features: [
-        'Hygienic sorting, destoning, and precision weight packaging',
-        'Custom logo sticker & branded pouch integration',
-        'Fast turnaround for retail stores, vendors & distributors'
-      ]
-    },
-
-    // Slide 5: Event Souvenirs, Charity Distribution & Skills Empowerment
-    {
-      id: 'service-souvenirs-outreach',
-      tabLabel: '05. Souvenirs & Outreach',
-      serviceTag: 'SERVICE 05 • EVENT SOUVENIRS, OUTREACH & EMPOWERMENT',
-      headlinePrefix: 'PLAN AHEAD.',
-      headlineAccent: 'SAVE GRADUALLY.',
-      headlineSuffix: 'CELEBRATE BETTER.',
-      subtitle:
-        'Delight wedding and celebration guests with useful food-based souvenirs, empower communities through transparent charity food drives, or enroll in practical food processing and micro-entrepreneurship training.',
-      primaryBtnText: 'EVENT & OUTREACH ENQUIRY',
-      primaryAction: () => {
-        if (onOpenServiceEnquiry) {
-          onOpenServiceEnquiry('Event Souvenirs & Charity Distribution', 'Event Souvenirs & Outreach');
-        } else {
-          window.open(createWhatsAppUrl('Hello PGFV, I would like to enquire about event food souvenirs and charity outreach.'), '_blank');
-        }
-      },
-      primaryIcon: Users,
       secondaryBtnText: 'VIEW PARTNERSHIPS',
       secondaryAction: () => {
         if (onOpenPartnership) {
@@ -215,7 +212,7 @@ export function HeroSection({
         }
       },
       image:
-        'https://res.cloudinary.com/dhzouslh1/image/upload/v1788937284/1000290177_yo7qcp.jpg',
+        'https://res.cloudinary.com/dhzouslh1/image/upload/v1791028606/1000335097_n3upfq.jpg',
       imageBadge: 'Events & Community Welfare',
       badgeHighlight: 'Impact Beyond Plate',
       cardTitle: 'COMMUNITY IMPACT',
@@ -335,6 +332,36 @@ export function HeroSection({
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         
+        {/* Brand Mission & Clarity Banner */}
+        <div className="mb-6 p-4 rounded-2xl bg-white border border-[#E8E2D5] shadow-xs flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+          <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-3">
+            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-extrabold bg-[#1B4332] text-[#E2B13C] tracking-wider uppercase">
+              Quality • Integrity • Impact
+            </span>
+            <span className="text-xs sm:text-sm font-semibold text-[#143527] italic">
+              “A global priority to making cooking easier.”
+            </span>
+          </div>
+          <div className="text-[11px] sm:text-xs text-[#52635B] flex flex-wrap items-center justify-center md:justify-end gap-1.5 font-medium">
+            <span className="font-bold text-[#143527]">Solutions For:</span>
+            <span>Individuals</span>
+            <span>•</span>
+            <span>Families</span>
+            <span>•</span>
+            <span>Students</span>
+            <span>•</span>
+            <span>Schools</span>
+            <span>•</span>
+            <span>Businesses</span>
+            <span>•</span>
+            <span>Organisations</span>
+            <span>•</span>
+            <span>Events</span>
+            <span>•</span>
+            <span>Communities</span>
+          </div>
+        </div>
+
         {/* 5 Service Slider Navigation Tabs with animated layout indicator */}
         <div className="flex items-center justify-between mb-6 pb-2 border-b border-[#EBE4D8] overflow-x-auto no-scrollbar gap-2">
           <div className="flex items-center gap-1.5 sm:gap-2">
@@ -683,46 +710,61 @@ export function HeroSection({
 
         {/* Brand Pillars Trust Strip directly below Slider */}
         <div className="mt-12 pt-8 border-t border-[#E8E2D5]">
-          <p className="text-center text-xs font-bold uppercase tracking-widest text-[#798880] mb-4">
-            OUR CORE BRAND PILLARS
-          </p>
+          <div className="text-center max-w-xl mx-auto mb-5">
+            <p className="text-xs font-bold uppercase tracking-widest text-[#798880] mb-1">
+              CENTRAL BRAND VALUES
+            </p>
+            <h3 className="font-heading font-extrabold text-lg sm:text-xl text-[#143527]">
+              Quality • Integrity • Impact
+            </h3>
+            <p className="text-xs sm:text-sm text-[#4E5E56] italic mt-0.5">
+              “A global priority to making cooking easier.”
+            </p>
+          </div>
+
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 max-w-4xl mx-auto">
             <motion.div 
               whileHover={{ y: -2 }}
-              className="bg-white p-4 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-center gap-3.5 transition-shadow hover:shadow-sm"
+              className="bg-white p-4.5 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-start gap-3.5 transition-shadow hover:shadow-sm"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#1B4332]/10 text-[#1B4332] flex items-center justify-center font-heading font-extrabold text-sm">
+              <div className="w-10 h-10 rounded-xl bg-[#1B4332]/10 text-[#1B4332] flex items-center justify-center font-heading font-extrabold text-sm shrink-0 mt-0.5">
                 01
               </div>
               <div>
                 <h4 className="font-heading font-bold text-sm text-[#1B4332] tracking-wide">QUALITY</h4>
-                <p className="text-xs text-[#5A6860] leading-snug">Hygienic processing, select grains, pure flours & pest-free staples.</p>
+                <p className="text-xs text-[#5A6860] leading-snug mt-1">
+                  100% stone-free, sifted flours, clean grains, double-refined oils, and hygienically smoked proteins.
+                </p>
               </div>
             </motion.div>
 
             <motion.div 
               whileHover={{ y: -2 }}
-              className="bg-white p-4 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-center gap-3.5 transition-shadow hover:shadow-sm"
+              className="bg-white p-4.5 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-start gap-3.5 transition-shadow hover:shadow-sm"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#C68A1B]/15 text-[#C68A1B] flex items-center justify-center font-heading font-extrabold text-sm">
+              <div className="w-10 h-10 rounded-xl bg-[#C68A1B]/15 text-[#C68A1B] flex items-center justify-center font-heading font-extrabold text-sm shrink-0 mt-0.5">
                 02
               </div>
               <div>
                 <h4 className="font-heading font-bold text-sm text-[#1B4332] tracking-wide">INTEGRITY</h4>
-                <p className="text-xs text-[#5A6860] leading-snug">Unique participant IDs, verified payment receipts & truthful records.</p>
+                <p className="text-xs text-[#5A6860] leading-snug mt-1">
+                  Honest weight measurements, transparent pricing, verified receipts, and dependable delivery commitments.
+                </p>
               </div>
             </motion.div>
 
             <motion.div 
               whileHover={{ y: -2 }}
-              className="bg-white p-4 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-center gap-3.5 transition-shadow hover:shadow-sm"
+              className="bg-white p-4.5 rounded-2xl border border-[#E8E2D5] shadow-xs flex items-start gap-3.5 transition-shadow hover:shadow-sm"
             >
-              <div className="w-10 h-10 rounded-xl bg-[#1B4332]/10 text-[#1B4332] flex items-center justify-center font-heading font-extrabold text-sm">
+              <div className="w-10 h-10 rounded-xl bg-[#1B4332]/10 text-[#1B4332] flex items-center justify-center font-heading font-extrabold text-sm shrink-0 mt-0.5">
                 03
               </div>
               <div>
                 <h4 className="font-heading font-bold text-sm text-[#1B4332] tracking-wide">IMPACT</h4>
-                <p className="text-xs text-[#5A6860] leading-snug">Student empowerment, practical entrepreneurship & food charity.</p>
+                <p className="text-xs text-[#5A6860] leading-snug mt-1">
+                  Supporting students, empowering women and youths with vocational skills, and aiding community welfare.
+                </p>
               </div>
             </motion.div>
           </div>
