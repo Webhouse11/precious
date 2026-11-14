@@ -19,6 +19,7 @@ import {
 import { EVENT_USE_CASES, SNACK_OPTIONS, SNACK_PACKAGE_TIERS } from '../../data/eventSnacksData';
 import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY, optimizeCloudinary } from '../../utils/helpers';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { appendReferralToWhatsAppMessage } from '../../services/referralTracking';
 
 interface EventSnackPackagesPageProps {
   onNavigateHome?: () => void;
@@ -90,7 +91,8 @@ export const EventSnackPackagesPage: React.FC<EventSnackPackagesPageProps> = ({
 
     message += `\nPlease confirm availability and provide quotation. Thank you!`;
 
-    window.open(createWhatsAppUrl(message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
+    const enhanced = appendReferralToWhatsAppMessage(message);
+    window.open(createWhatsAppUrl(enhanced.message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
     setIsSubmitted(true);
   };
 

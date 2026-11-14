@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { X, Building2, MessageCircle, Send, CheckCircle2 } from 'lucide-react';
 import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE } from '../../utils/helpers';
 import { BulkOrderFormState } from '../../types/catalogue';
+import { appendReferralToWhatsAppMessage, submitAttributedOrder } from '../../services/referralTracking';
 
 interface BulkOrderModalProps {
   isOpen: boolean;
@@ -25,8 +26,26 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
 
   if (!isOpen) return null;
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    let orderRef: string | undefined;
+    try {
+      const budgetNumeric = Number((formData.budgetEstimate || '').replace(/[^0-9]/g, '')) || 0;
+      const saved = await submitAttributedOrder({
+        channel: 'whatsapp',
+        customerName: formData.fullName,
+        customerPhone: formData.phone,
+        customerEmail: formData.email || undefined,
+        deliveryLocation: formData.deliveryTown || 'Nigeria',
+        itemsSummary: `Bulk Order: ${formData.productsRequired} (${formData.estimatedVolume})`,
+        orderTotalNgn: budgetNumeric,
+        hasUnpricedItems: budgetNumeric === 0,
+      });
+      orderRef = saved.orderRef;
+    } catch {
+      // Non-blocking fallback so WhatsApp always opens
+    }
 
     let message = `Hello Precious Gem Foods Ventures (PGFV),\n\n`;
     message += `I would like to submit a *BULK ORDER ENQUIRY*.\n\n`;
@@ -42,7 +61,8 @@ export const BulkOrderModal: React.FC<BulkOrderModalProps> = ({ isOpen, onClose 
     if (formData.notes) message += `*Special Requirements:* ${formData.notes}\n`;
     message += `\nPlease provide wholesale quotation and processing schedule. Thank you!`;
 
-    window.open(createWhatsAppUrl(message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
+    const enhanced = appendReferralToWhatsAppMessage(message, orderRef);
+    window.open(createWhatsAppUrl(enhanced.message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
     setSubmitted(true);
   };
 

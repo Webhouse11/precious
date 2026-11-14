@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { X, Send, CheckCircle2, MessageSquare } from 'lucide-react';
 import { saveEnquiryLocally, createWhatsAppUrl, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY } from '../../utils/helpers';
+import { appendReferralToWhatsAppMessage, submitAttributedOrder } from '../../services/referralTracking';
 
 interface EnquiryModalProps {
   isOpen: boolean;
@@ -24,11 +25,12 @@ export function EnquiryModal({
     itemName ? `I am inquiring about availability and pricing for ${itemName}.` : ''
   );
   const [submitted, setSubmitted] = useState(false);
+  const [orderRef, setOrderRef] = useState<string | undefined>(undefined);
 
   if (!isOpen) return null;
 
-  const buildWhatsAppText = () => {
-    return [
+  const buildWhatsAppText = (resolvedRef?: string) => {
+    const base = [
       `📩 *PGFV ENQUIRY / BOOKING REQUEST*`,
       `=========================================`,
       `📌 *Category:* ${defaultCategory}`,
@@ -41,9 +43,10 @@ export function EnquiryModal({
       `=========================================`,
       `Hello Precious Gem Foods Ventures, please attend to my enquiry.`
     ].filter(Boolean).join('\n');
+    return appendReferralToWhatsAppMessage(base, resolvedRef).message;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!name || !phone) return;
 
@@ -56,14 +59,32 @@ export function EnquiryModal({
       message
     });
 
+    let resolvedRef: string | undefined;
+    try {
+      const saved = await submitAttributedOrder({
+        channel: 'whatsapp',
+        customerName: name,
+        customerPhone: phone,
+        customerEmail: email || undefined,
+        deliveryLocation: 'Nigeria',
+        itemsSummary: `${defaultCategory}${itemName ? ` — ${itemName}` : ''}: ${message}`,
+        orderTotalNgn: 0,
+        hasUnpricedItems: true,
+      });
+      resolvedRef = saved.orderRef;
+      setOrderRef(resolvedRef);
+    } catch {
+      // Non-blocking
+    }
+
     setSubmitted(true);
 
-    const text = buildWhatsAppText();
+    const text = buildWhatsAppText(resolvedRef);
     window.open(createWhatsAppUrl(text, PGFV_WHATSAPP_PHONE), '_blank');
   };
 
   const handleSendToWhatsApp = () => {
-    const text = buildWhatsAppText();
+    const text = buildWhatsAppText(orderRef);
     window.open(createWhatsAppUrl(text, PGFV_WHATSAPP_PHONE), '_blank');
   };
 

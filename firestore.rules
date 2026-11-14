@@ -1,0 +1,619 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global safety net: default deny
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // -----------------------------------------------------------------------
+    // Global Hardened Helpers
+    // -----------------------------------------------------------------------
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isOwner(uid) {
+      return isVerifiedUser() && request.auth.uid == uid;
+    }
+
+    function isBootstrappedAdmin() {
+      return isVerifiedUser() && request.auth.token.email == 'olurantiprofile@gmail.com';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdmin() || (
+        isVerifiedUser() && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+      );
+    }
+
+    function isNonEmptyString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isOptionalString(val, maxLen) {
+      return val is string && val.size() <= maxLen;
+    }
+
+    // -----------------------------------------------------------------------
+    // Validation Blueprints
+    // -----------------------------------------------------------------------
+    function isValidAdmin(data) {
+      return data.keys().hasAll(['uid', 'email', 'name', 'role', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'email', 'name', 'role', 'createdAt'])
+        && isValidId(data.uid)
+        && isNonEmptyString(data.email, 3, 180)
+        && isNonEmptyString(data.name, 2, 120)
+        && data.role in ['admin', 'super_admin']
+        && data.createdAt is timestamp;
+    }
+
+    function isValidCampaign(data) {
+      return data.keys().hasAll([
+          'id', 'name', 'slug', 'description', 'startDate', 'endDate', 'timezone',
+          'referralTarget', 'rewardDescription', 'rewardValueNgn', 'attributionWindowDays',
+          'qualificationRules', 'status', 'registrationOpen', 'createdBy', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'id', 'name', 'slug', 'description', 'startDate', 'endDate', 'timezone',
+          'referralTarget', 'rewardDescription', 'rewardValueNgn', 'attributionWindowDays',
+          'qualificationRules', 'status', 'registrationOpen', 'createdBy', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.id)
+        && isNonEmptyString(data.name, 3, 160)
+        && isNonEmptyString(data.slug, 2, 80)
+        && isNonEmptyString(data.description, 3, 1000)
+        && isNonEmptyString(data.startDate, 8, 40)
+        && isNonEmptyString(data.endDate, 8, 40)
+        && isNonEmptyString(data.timezone, 3, 40)
+        && data.referralTarget is int && data.referralTarget >= 1 && data.referralTarget <= 1000
+        && isNonEmptyString(data.rewardDescription, 3, 200)
+        && data.rewardValueNgn is int && data.rewardValueNgn >= 0
+        && data.attributionWindowDays is int && data.attributionWindowDays >= 1 && data.attributionWindowDays <= 365
+        && isNonEmptyString(data.qualificationRules, 3, 1500)
+        && data.status in ['active', 'draft', 'paused', 'ended']
+        && data.registrationOpen is bool
+        && isNonEmptyString(data.createdBy, 1, 128)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAmbassador(data) {
+      return data.keys().hasAll([
+          'uid', 'applicationRef', 'campaignId', 'fullName', 'phone', 'normalizedPhone',
+          'email', 'normalizedEmail', 'state', 'city', 'socialPlatform', 'agreedToTerms',
+          'status', 'referralCode', 'referralLink', 'qualificationStatus', 'rewardStatus',
+          'visitCount', 'attributedCustomersCount', 'ordersReceivedCount',
+          'ordersAwaitingVerificationCount', 'confirmedReferralsCount', 'rejectedReferralsCount',
+          'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'uid', 'applicationRef', 'campaignId', 'fullName', 'phone', 'normalizedPhone',
+          'email', 'normalizedEmail', 'state', 'city', 'socialPlatform', 'agreedToTerms',
+          'status', 'referralCode', 'referralLink', 'qualificationStatus', 'rewardStatus',
+          'visitCount', 'attributedCustomersCount', 'ordersReceivedCount',
+          'ordersAwaitingVerificationCount', 'confirmedReferralsCount', 'rejectedReferralsCount',
+          'approvedBy', 'approvedAt', 'rejectionReason', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.uid)
+        && isNonEmptyString(data.applicationRef, 4, 40)
+        && isValidId(data.campaignId)
+        && isNonEmptyString(data.fullName, 2, 120)
+        && isNonEmptyString(data.phone, 7, 30)
+        && isNonEmptyString(data.normalizedPhone, 7, 25)
+        && isNonEmptyString(data.email, 5, 180)
+        && isNonEmptyString(data.normalizedEmail, 5, 180)
+        && isNonEmptyString(data.state, 2, 60)
+        && isNonEmptyString(data.city, 2, 80)
+        && isNonEmptyString(data.socialPlatform, 2, 60)
+        && data.agreedToTerms == true
+        && data.status in ['PENDING_APPROVAL', 'APPROVED', 'REJECTED', 'SUSPENDED']
+        && isOptionalString(data.referralCode, 32)
+        && isOptionalString(data.referralLink, 256)
+        && data.qualificationStatus in [
+          'NOT_YET_QUALIFIED', 'IN_PROGRESS', 'TARGET_ACHIEVED',
+          'REWARD_AWAITING_APPROVAL', 'REWARD_APPROVED', 'REWARD_COLLECTED'
+        ]
+        && data.rewardStatus in [
+          'NOT_YET_QUALIFIED', 'IN_PROGRESS', 'TARGET_ACHIEVED',
+          'REWARD_AWAITING_APPROVAL', 'REWARD_APPROVED', 'REWARD_COLLECTED'
+        ]
+        && data.visitCount is int && data.visitCount >= 0
+        && data.attributedCustomersCount is int && data.attributedCustomersCount >= 0
+        && data.ordersReceivedCount is int && data.ordersReceivedCount >= 0
+        && data.ordersAwaitingVerificationCount is int && data.ordersAwaitingVerificationCount >= 0
+        && data.confirmedReferralsCount is int && data.confirmedReferralsCount >= 0
+        && data.rejectedReferralsCount is int && data.rejectedReferralsCount >= 0
+        && (!('approvedBy' in data) || isOptionalString(data.approvedBy, 180))
+        && (!('approvedAt' in data) || data.approvedAt is timestamp || data.approvedAt is string)
+        && (!('rejectionReason' in data) || isOptionalString(data.rejectionReason, 400))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidUniqueIndex(data) {
+      return data.keys().hasAll(['ambassadorUid', 'campaignId', 'createdAt'])
+        && data.keys().hasOnly(['ambassadorUid', 'campaignId', 'createdAt'])
+        && isValidId(data.ambassadorUid)
+        && isValidId(data.campaignId)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidReferralCode(data) {
+      return data.keys().hasAll(['code', 'ambassadorId', 'campaignId', 'active', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['code', 'ambassadorId', 'campaignId', 'active', 'createdAt', 'updatedAt'])
+        && isValidId(data.code)
+        && isValidId(data.ambassadorId)
+        && isValidId(data.campaignId)
+        && data.active is bool
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidReferralVisit(data) {
+      return data.keys().hasAll(['id', 'referralCode', 'ambassadorId', 'campaignId', 'landingPage', 'trafficSource', 'sessionId', 'visitedAt'])
+        && data.keys().hasOnly(['id', 'referralCode', 'ambassadorId', 'campaignId', 'landingPage', 'trafficSource', 'sessionId', 'visitedAt'])
+        && isValidId(data.id)
+        && isValidId(data.referralCode)
+        && isValidId(data.ambassadorId)
+        && isValidId(data.campaignId)
+        && isNonEmptyString(data.landingPage, 1, 240)
+        && isOptionalString(data.trafficSource, 160)
+        && isNonEmptyString(data.sessionId, 4, 128)
+        && data.visitedAt is timestamp;
+    }
+
+    function isValidOrder(data) {
+      return data.keys().hasAll([
+          'orderRef', 'channel', 'campaignId', 'customerName', 'customerPhone', 'normalizedPhone',
+          'deliveryLocation', 'itemsSummary', 'orderTotalNgn', 'hasUnpricedItems', 'orderDate',
+          'orderStatus', 'paymentStatus', 'referralCode', 'ambassadorId', 'attributionRef',
+          'isNewCustomerFlag', 'qualificationState', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'orderRef', 'channel', 'campaignId', 'customerName', 'customerPhone', 'normalizedPhone',
+          'customerEmail', 'normalizedEmail', 'deliveryLocation', 'itemsSummary', 'orderTotalNgn',
+          'hasUnpricedItems', 'orderDate', 'orderStatus', 'paymentStatus', 'referralCode',
+          'ambassadorId', 'attributionRef', 'isNewCustomerFlag', 'qualificationState',
+          'rejectionReason', 'paymentBankRef', 'paymentAmountReceived', 'paymentDate',
+          'paymentNotes', 'paymentEvidenceNote', 'verifiedByAdminUid', 'verifiedByAdminEmail',
+          'verifiedAt', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.orderRef)
+        && data.channel in ['website', 'whatsapp']
+        && isValidId(data.campaignId)
+        && isNonEmptyString(data.customerName, 2, 140)
+        && isNonEmptyString(data.customerPhone, 7, 30)
+        && isNonEmptyString(data.normalizedPhone, 7, 25)
+        && (!('customerEmail' in data) || isOptionalString(data.customerEmail, 180))
+        && (!('normalizedEmail' in data) || isOptionalString(data.normalizedEmail, 180))
+        && isNonEmptyString(data.deliveryLocation, 2, 240)
+        && isNonEmptyString(data.itemsSummary, 2, 1500)
+        && (data.orderTotalNgn is int || data.orderTotalNgn is float) && data.orderTotalNgn >= 0
+        && data.hasUnpricedItems is bool
+        && isNonEmptyString(data.orderDate, 8, 40)
+        && data.orderStatus in ['PENDING', 'COMPLETED', 'CANCELLED', 'REFUNDED']
+        && data.paymentStatus in ['PENDING_VERIFICATION', 'VERIFIED_PAID', 'PAYMENT_REJECTED', 'REFUNDED']
+        && isOptionalString(data.referralCode, 32)
+        && isOptionalString(data.ambassadorId, 128)
+        && isOptionalString(data.attributionRef, 64)
+        && data.isNewCustomerFlag in ['PENDING_CHECK', 'VERIFIED_NEW', 'EXISTING_CUSTOMER', 'SELF_REFERRAL', 'NEEDS_REVIEW']
+        && data.qualificationState in ['PENDING', 'QUALIFIED', 'REJECTED']
+        && (!('rejectionReason' in data) || isOptionalString(data.rejectionReason, 400))
+        && (!('paymentBankRef' in data) || isOptionalString(data.paymentBankRef, 120))
+        && (!('paymentAmountReceived' in data) || ((data.paymentAmountReceived is int || data.paymentAmountReceived is float) && data.paymentAmountReceived >= 0))
+        && (!('paymentDate' in data) || isOptionalString(data.paymentDate, 40))
+        && (!('paymentNotes' in data) || isOptionalString(data.paymentNotes, 600))
+        && (!('paymentEvidenceNote' in data) || isOptionalString(data.paymentEvidenceNote, 600))
+        && (!('verifiedByAdminUid' in data) || isOptionalString(data.verifiedByAdminUid, 128))
+        && (!('verifiedByAdminEmail' in data) || isOptionalString(data.verifiedByAdminEmail, 180))
+        && (!('verifiedAt' in data) || data.verifiedAt is timestamp)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidReferralRecord(data) {
+      return data.keys().hasAll([
+          'recordId', 'orderRef', 'ambassadorId', 'referralCode', 'campaignId', 'channel',
+          'orderSummaryLabel', 'orderTotalNgn', 'orderStatus', 'paymentStatus',
+          'qualificationStatus', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'recordId', 'orderRef', 'ambassadorId', 'referralCode', 'campaignId', 'channel',
+          'orderSummaryLabel', 'orderTotalNgn', 'orderStatus', 'paymentStatus',
+          'qualificationStatus', 'rejectionReason', 'customerKeyHash', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.recordId)
+        && isValidId(data.orderRef)
+        && isValidId(data.ambassadorId)
+        && isValidId(data.referralCode)
+        && isValidId(data.campaignId)
+        && data.channel in ['website', 'whatsapp']
+        && isNonEmptyString(data.orderSummaryLabel, 2, 160)
+        && (data.orderTotalNgn is int || data.orderTotalNgn is float) && data.orderTotalNgn >= 0
+        && data.orderStatus in ['PENDING', 'COMPLETED', 'CANCELLED', 'REFUNDED']
+        && data.paymentStatus in ['PENDING_VERIFICATION', 'VERIFIED_PAID', 'PAYMENT_REJECTED', 'REFUNDED']
+        && data.qualificationStatus in ['AWAITING_PAYMENT', 'QUALIFIED', 'REJECTED']
+        && (!('rejectionReason' in data) || isOptionalString(data.rejectionReason, 400))
+        && (!('customerKeyHash' in data) || isOptionalString(data.customerKeyHash, 128))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidCustomerRecord(data) {
+      return data.keys().hasAll(['normalizedPhone', 'customerName', 'firstOrderRef', 'totalOrdersCount', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['normalizedPhone', 'customerName', 'normalizedEmail', 'firstOrderRef', 'qualifyingOrderRef', 'qualifyingCampaignId', 'totalOrdersCount', 'createdAt', 'updatedAt'])
+        && isNonEmptyString(data.normalizedPhone, 7, 25)
+        && isNonEmptyString(data.customerName, 2, 140)
+        && (!('normalizedEmail' in data) || isOptionalString(data.normalizedEmail, 180))
+        && isValidId(data.firstOrderRef)
+        && (!('qualifyingOrderRef' in data) || isOptionalString(data.qualifyingOrderRef, 64))
+        && (!('qualifyingCampaignId' in data) || isOptionalString(data.qualifyingCampaignId, 64))
+        && data.totalOrdersCount is int && data.totalOrdersCount >= 1
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidPaymentRecord(data) {
+      return data.keys().hasAll([
+          'paymentId', 'orderRef', 'bankTransactionRef', 'amountReceived',
+          'paymentDate', 'verificationState', 'verifiedByUid', 'verifiedByEmail', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'paymentId', 'orderRef', 'bankTransactionRef', 'amountReceived',
+          'paymentDate', 'verificationState', 'notes', 'evidenceNote',
+          'verifiedByUid', 'verifiedByEmail', 'createdAt'
+        ])
+        && isValidId(data.paymentId)
+        && isValidId(data.orderRef)
+        && isNonEmptyString(data.bankTransactionRef, 1, 120)
+        && (data.amountReceived is int || data.amountReceived is float) && data.amountReceived >= 0
+        && isNonEmptyString(data.paymentDate, 4, 40)
+        && data.verificationState in ['PENDING_VERIFICATION', 'VERIFIED_PAID', 'PAYMENT_REJECTED', 'REFUNDED']
+        && (!('notes' in data) || isOptionalString(data.notes, 600))
+        && (!('evidenceNote' in data) || isOptionalString(data.evidenceNote, 600))
+        && isValidId(data.verifiedByUid)
+        && isNonEmptyString(data.verifiedByEmail, 3, 180)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidRewardRecord(data) {
+      return data.keys().hasAll([
+          'rewardId', 'campaignId', 'ambassadorId', 'ambassadorName', 'referralCode',
+          'qualifyingReferralsCount', 'rewardDescription', 'rewardValueNgn',
+          'status', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'rewardId', 'campaignId', 'ambassadorId', 'ambassadorName', 'referralCode',
+          'qualifyingReferralsCount', 'rewardDescription', 'rewardValueNgn',
+          'status', 'approvedBy', 'approvedAt', 'collectedAt', 'fulfilmentNotes',
+          'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.rewardId)
+        && isValidId(data.campaignId)
+        && isValidId(data.ambassadorId)
+        && isNonEmptyString(data.ambassadorName, 2, 120)
+        && isValidId(data.referralCode)
+        && data.qualifyingReferralsCount is int && data.qualifyingReferralsCount >= 1
+        && isNonEmptyString(data.rewardDescription, 3, 200)
+        && data.rewardValueNgn is int && data.rewardValueNgn >= 0
+        && data.status in ['REWARD_AWAITING_APPROVAL', 'REWARD_APPROVED', 'REWARD_COLLECTED']
+        && (!('approvedBy' in data) || isOptionalString(data.approvedBy, 180))
+        && (!('approvedAt' in data) || isOptionalString(data.approvedAt, 40))
+        && (!('collectedAt' in data) || isOptionalString(data.collectedAt, 40))
+        && (!('fulfilmentNotes' in data) || isOptionalString(data.fulfilmentNotes, 600))
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidNotification(data) {
+      return data.keys().hasAll(['notificationId', 'recipientRole', 'recipientUid', 'type', 'title', 'message', 'read', 'createdAt'])
+        && data.keys().hasOnly(['notificationId', 'recipientRole', 'recipientUid', 'type', 'title', 'message', 'read', 'linkPath', 'createdAt'])
+        && isValidId(data.notificationId)
+        && data.recipientRole in ['admin', 'ambassador']
+        && isNonEmptyString(data.recipientUid, 1, 128)
+        && isNonEmptyString(data.type, 2, 64)
+        && isNonEmptyString(data.title, 2, 160)
+        && isNonEmptyString(data.message, 2, 600)
+        && data.read is bool
+        && (!('linkPath' in data) || isOptionalString(data.linkPath, 160))
+        && data.createdAt is timestamp;
+    }
+
+    function isValidAuditLog(data) {
+      return data.keys().hasAll(['logId', 'actorUid', 'actorEmail', 'action', 'targetCollection', 'targetId', 'summary', 'createdAt'])
+        && data.keys().hasOnly(['logId', 'actorUid', 'actorEmail', 'action', 'targetCollection', 'targetId', 'summary', 'createdAt'])
+        && isValidId(data.logId)
+        && isValidId(data.actorUid)
+        && isNonEmptyString(data.actorEmail, 3, 180)
+        && isNonEmptyString(data.action, 2, 80)
+        && isNonEmptyString(data.targetCollection, 2, 64)
+        && isNonEmptyString(data.targetId, 1, 160)
+        && isNonEmptyString(data.summary, 2, 800)
+        && data.createdAt is timestamp;
+    }
+
+    // -----------------------------------------------------------------------
+    // Collection Match Rules
+    // -----------------------------------------------------------------------
+
+    // Connection test document (non-PII health probe)
+    match /test/connection {
+      allow get: if true;
+    }
+
+    // Administrators
+    match /admins/{uid} {
+      allow get: if isValidId(uid) && (isOwner(uid) || isAdmin());
+      allow list: if isAdmin();
+      allow create: if isValidId(uid) && isAdmin() && isValidAdmin(incoming()) && incoming().uid == uid && incoming().createdAt == request.time;
+      allow update: if isValidId(uid) && isAdmin() && isValidAdmin(incoming()) && incoming().uid == existing().uid && incoming().createdAt == existing().createdAt;
+      allow delete: if isValidId(uid) && isBootstrappedAdmin() && uid != request.auth.uid;
+    }
+
+    // Campaigns (public read for landing pages/tracking, admin-only write)
+    match /campaigns/{campaignId} {
+      allow get: if isValidId(campaignId);
+      allow list: if true;
+      allow create: if isValidId(campaignId) && isAdmin() && isValidCampaign(incoming())
+        && incoming().id == campaignId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(campaignId) && isAdmin() && isValidCampaign(incoming())
+        && incoming().id == existing().id
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Ambassadors (owner read + admin full management; self-create strictly PENDING_APPROVAL)
+    match /ambassadors/{ambassadorId} {
+      allow get: if isValidId(ambassadorId) && (isOwner(ambassadorId) || isAdmin());
+      allow list: if isAdmin() || (isVerifiedUser() && resource.data.uid == request.auth.uid);
+      allow create: if isValidId(ambassadorId)
+        && isOwner(ambassadorId)
+        && isValidAmbassador(incoming())
+        && incoming().uid == request.auth.uid
+        && incoming().status == 'PENDING_APPROVAL'
+        && incoming().referralCode == ''
+        && incoming().referralLink == ''
+        && incoming().qualificationStatus == 'NOT_YET_QUALIFIED'
+        && incoming().rewardStatus == 'NOT_YET_QUALIFIED'
+        && incoming().visitCount == 0
+        && incoming().attributedCustomersCount == 0
+        && incoming().ordersReceivedCount == 0
+        && incoming().ordersAwaitingVerificationCount == 0
+        && incoming().confirmedReferralsCount == 0
+        && incoming().rejectedReferralsCount == 0
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (incoming().campaignId == 'christmas-2026' || exists(/databases/$(database)/documents/campaigns/$(incoming().campaignId)));
+      allow update: if isValidId(ambassadorId)
+        && isAdmin()
+        && isValidAmbassador(incoming())
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Normalized uniqueness indexes for ambassador registration (no PII leaked on list)
+    match /ambassador_phone_index/{phoneKey} {
+      allow get: if isValidId(phoneKey) && isVerifiedUser();
+      allow list: if isAdmin();
+      allow create: if isValidId(phoneKey)
+        && isVerifiedUser()
+        && isValidUniqueIndex(incoming())
+        && incoming().ambassadorUid == request.auth.uid
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/ambassador_phone_index/$(phoneKey));
+      allow update, delete: if isValidId(phoneKey) && isAdmin();
+    }
+
+    match /ambassador_email_index/{emailKey} {
+      allow get: if isValidId(emailKey) && isVerifiedUser();
+      allow list: if isAdmin();
+      allow create: if isValidId(emailKey)
+        && isVerifiedUser()
+        && isValidUniqueIndex(incoming())
+        && incoming().ambassadorUid == request.auth.uid
+        && incoming().createdAt == request.time
+        && !exists(/databases/$(database)/documents/ambassador_email_index/$(emailKey));
+      allow update, delete: if isValidId(emailKey) && isAdmin();
+    }
+
+    // Referral codes (public single-code verification without PII)
+    match /referral_codes/{code} {
+      allow get: if isValidId(code);
+      allow list: if isAdmin();
+      allow create: if isValidId(code) && isAdmin() && isValidReferralCode(incoming())
+        && incoming().code == code
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && !exists(/databases/$(database)/documents/referral_codes/$(code));
+      allow update: if isValidId(code) && isAdmin() && isValidReferralCode(incoming())
+        && incoming().code == existing().code
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Referral visits (public intake for active referral code; ambassador/admin read)
+    match /referral_visits/{visitId} {
+      allow get: if isValidId(visitId) && (isAdmin() || (isVerifiedUser() && existing().ambassadorId == request.auth.uid));
+      allow list: if isAdmin() || (isVerifiedUser() && resource.data.ambassadorId == request.auth.uid);
+      allow create: if isValidId(visitId)
+        && isValidReferralVisit(incoming())
+        && incoming().id == visitId
+        && incoming().visitedAt == request.time
+        && exists(/databases/$(database)/documents/referral_codes/$(incoming().referralCode))
+        && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.active == true
+        && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.ambassadorId == incoming().ambassadorId;
+      allow update, delete: if false;
+    }
+
+    // Orders (PII-protected: strictly admin read/update; validated intake on create)
+    match /orders/{orderId} {
+      allow get: if isValidId(orderId) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(orderId)
+        && isValidOrder(incoming())
+        && incoming().orderRef == orderId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() || (
+            incoming().orderStatus == 'PENDING'
+            && incoming().paymentStatus == 'PENDING_VERIFICATION'
+            && incoming().qualificationState == 'PENDING'
+            && incoming().isNewCustomerFlag == 'PENDING_CHECK'
+            && (!('verifiedByAdminUid' in incoming()) || incoming().verifiedByAdminUid == '')
+            && (!isSignedIn() || incoming().ambassadorId != request.auth.uid)
+            && (
+              incoming().referralCode == ''
+              || (
+                exists(/databases/$(database)/documents/referral_codes/$(incoming().referralCode))
+                && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.active == true
+                && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.ambassadorId == incoming().ambassadorId
+              )
+            )
+          )
+        );
+      allow update: if isValidId(orderId)
+        && isAdmin()
+        && isValidOrder(incoming())
+        && incoming().orderRef == existing().orderRef
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Anonymized Referral Records (ambassador reads own without customer PII; admin full control)
+    match /referral_records/{recordId} {
+      allow get: if isValidId(recordId) && (isAdmin() || (isVerifiedUser() && existing().ambassadorId == request.auth.uid));
+      allow list: if isAdmin() || (isVerifiedUser() && resource.data.ambassadorId == request.auth.uid);
+      allow create: if isValidId(recordId)
+        && isValidReferralRecord(incoming())
+        && incoming().recordId == recordId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin() || (
+            incoming().orderStatus == 'PENDING'
+            && incoming().paymentStatus == 'PENDING_VERIFICATION'
+            && incoming().qualificationStatus == 'AWAITING_PAYMENT'
+            && (!isSignedIn() || incoming().ambassadorId != request.auth.uid)
+            && existsAfter(/databases/$(database)/documents/orders/$(incoming().orderRef))
+            && exists(/databases/$(database)/documents/referral_codes/$(incoming().referralCode))
+            && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.active == true
+            && get(/databases/$(database)/documents/referral_codes/$(incoming().referralCode)).data.ambassadorId == incoming().ambassadorId
+          )
+        );
+      allow update: if isValidId(recordId)
+        && isAdmin()
+        && isValidReferralRecord(incoming())
+        && incoming().recordId == existing().recordId
+        && incoming().orderRef == existing().orderRef
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Customers (admin-only directory for new-customer verification)
+    match /customers/{phoneKey} {
+      allow get: if isValidId(phoneKey) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(phoneKey) && isAdmin() && isValidCustomerRecord(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(phoneKey) && isAdmin() && isValidCustomerRecord(incoming())
+        && incoming().normalizedPhone == existing().normalizedPhone
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time;
+      allow delete: if false;
+    }
+
+    // Payments ledger (admin only)
+    match /payments/{paymentId} {
+      allow get: if isValidId(paymentId) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(paymentId) && isAdmin() && isValidPaymentRecord(incoming())
+        && incoming().paymentId == paymentId
+        && incoming().verifiedByUid == request.auth.uid
+        && incoming().createdAt == request.time;
+      allow update, delete: if false;
+    }
+
+    // Rewards (uniquely keyed by campaignId_ambassadorId; admin writes, owner/admin reads)
+    match /rewards/{rewardId} {
+      allow get: if isValidId(rewardId) && (isAdmin() || (isVerifiedUser() && existing().ambassadorId == request.auth.uid));
+      allow list: if isAdmin() || (isVerifiedUser() && resource.data.ambassadorId == request.auth.uid);
+      allow create: if isValidId(rewardId) && isAdmin() && isValidRewardRecord(incoming())
+        && incoming().rewardId == rewardId
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+      allow update: if isValidId(rewardId) && isAdmin() && isValidRewardRecord(incoming())
+        && incoming().rewardId == existing().rewardId
+        && incoming().campaignId == existing().campaignId
+        && incoming().ambassadorId == existing().ambassadorId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (existing().status != 'REWARD_COLLECTED' || incoming().status == 'REWARD_COLLECTED');
+      allow delete: if false;
+    }
+
+    // Notifications (scoped by recipientUid / admin)
+    match /notifications/{notificationId} {
+      allow get: if isValidId(notificationId) && (isAdmin() || (isVerifiedUser() && existing().recipientUid == request.auth.uid));
+      allow list: if isAdmin() || (isVerifiedUser() && resource.data.recipientUid == request.auth.uid);
+      allow create: if isValidId(notificationId)
+        && isValidNotification(incoming())
+        && incoming().notificationId == notificationId
+        && incoming().read == false
+        && incoming().createdAt == request.time
+        && (
+          isAdmin()
+          || (isVerifiedUser() && incoming().recipientRole == 'admin' && incoming().recipientUid == 'ADMIN' && incoming().type == 'NEW_AMBASSADOR_APPLICATION')
+          || (incoming().recipientRole == 'admin' && incoming().recipientUid == 'ADMIN' && incoming().type == 'NEW_ORDER_SUBMITTED')
+        );
+      allow update: if isValidId(notificationId)
+        && isValidNotification(incoming())
+        && incoming().notificationId == existing().notificationId
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isVerifiedUser() && existing().recipientUid == request.auth.uid && incoming().diff(existing()).affectedKeys().hasOnly(['read']))
+        );
+      allow delete: if false;
+    }
+
+    // Audit Logs (immutable, admin-only)
+    match /audit_logs/{logId} {
+      allow get: if isValidId(logId) && isAdmin();
+      allow list: if isAdmin();
+      allow create: if isValidId(logId) && isAdmin() && isValidAuditLog(incoming())
+        && incoming().logId == logId
+        && incoming().actorUid == request.auth.uid
+        && incoming().createdAt == request.time;
+      allow update, delete: if false;
+    }
+  }
+}

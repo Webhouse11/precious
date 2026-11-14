@@ -17,6 +17,7 @@ import {
 } from 'lucide-react';
 import { STUDENT_PACKAGES, CAMPUS_SCHOOLS_LIST, StudentPackage } from '../../data/studentPackagesData';
 import { createWhatsAppUrl, formatNaira, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY } from '../../utils/helpers';
+import { appendReferralToWhatsAppMessage, submitAttributedOrder } from '../../services/referralTracking';
 
 interface StudentOrderFormProps {
   initialSelectedPackageId?: string;
@@ -46,6 +47,7 @@ export function StudentOrderForm({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [copied, setCopied] = useState(false);
+  const [generatedOrderRef, setGeneratedOrderRef] = useState<string | undefined>(undefined);
 
   // Sync initialSelectedPackageId if changed from outside
   useEffect(() => {
@@ -120,7 +122,7 @@ export function StudentOrderForm({
 
     if (isCustomPackage) {
       const budgetFormatted = customBudget.startsWith('₦') ? customBudget : `₦${customBudget}`;
-      return [
+      const base = [
         `Hello Precious Gem Foods Ventures,`,
         ``,
         `I would like to request a custom Student Food Package.`,
@@ -142,13 +144,14 @@ export function StudentOrderForm({
         ``,
         `Thank you.`
       ].filter(line => line !== undefined).join('\n');
+      return appendReferralToWhatsAppMessage(base, generatedOrderRef).message;
     }
 
     // Standard Package
     const budgetPerPackage = formatNaira(currentPkg.price);
     const totalEst = formatNaira(currentPkg.price * quantity);
 
-    return [
+    const base = [
       `Hello Precious Gem Foods Ventures,`,
       ``,
       `I would like to make an enquiry about a Student Food Package.`,
@@ -178,9 +181,10 @@ export function StudentOrderForm({
       ``,
       `Thank you.`
     ].filter(line => line !== undefined && line !== '').join('\n');
+    return appendReferralToWhatsAppMessage(base, generatedOrderRef).message;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validate()) {
       const firstError = document.querySelector('.error-input');
@@ -189,6 +193,25 @@ export function StudentOrderForm({
       }
       return;
     }
+
+    try {
+      const unitBudget = isCustomPackage
+        ? Number(customBudget.replace(/[^0-9]/g, '')) || 0
+        : currentPkg.price;
+      const saved = await submitAttributedOrder({
+        channel: 'whatsapp',
+        customerName: fullName.trim(),
+        customerPhone: phone.trim(),
+        deliveryLocation: `${getResolvedSchoolName()} — ${hostelLocation.trim()}, ${deliveryAddress.trim()}`,
+        itemsSummary: `${isCustomPackage ? 'Custom Student Package' : currentPkg.name} x${quantity}`,
+        orderTotalNgn: unitBudget * quantity,
+        hasUnpricedItems: unitBudget === 0,
+      });
+      setGeneratedOrderRef(saved.orderRef);
+    } catch {
+      // Fallback gracefully
+    }
+
     setIsSubmitted(true);
   };
 

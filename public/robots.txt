@@ -1,4 +1,7 @@
 User-agent: *
 Allow: /
+Disallow: /admin/
+Disallow: /ambassador/
 
 Sitemap: https://preciousgemfoods.com.ng/sitemap.xml
+

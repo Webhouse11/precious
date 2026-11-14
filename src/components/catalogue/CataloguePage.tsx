@@ -21,8 +21,9 @@ import { ProductCard } from './ProductCard';
 import { CatalogueOrderDrawer } from './CatalogueOrderDrawer';
 import { BulkOrderModal } from './BulkOrderModal';
 import { CustomPackageModal } from './CustomPackageModal';
-import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY } from '../../utils/helpers';
+import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE } from '../../utils/helpers';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { appendReferralToWhatsAppMessage } from '../../services/referralTracking';
 
 interface CataloguePageProps {
   onNavigateHome?: () => void;
@@ -124,7 +125,8 @@ export const CataloguePage: React.FC<CataloguePageProps> = ({
     }
     msg += `\nPlease confirm availability and delivery timeframe. Thank you!`;
 
-    window.open(createWhatsAppUrl(msg, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
+    const enhanced = appendReferralToWhatsAppMessage(msg);
+    window.open(createWhatsAppUrl(enhanced.message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
   };
 
   const totalCartCount = cartItems.reduce((acc, i) => acc + i.quantity, 0);

@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { X, Trash2, ShoppingBag, MessageCircle, Send, Plus, Minus, ArrowRight, ShieldCheck, MapPin } from 'lucide-react';
+import { X, Trash2, ShoppingBag, MessageCircle, Plus, Minus, CheckCircle2, AlertCircle } from 'lucide-react';
 import { CartItem } from '../../types/catalogue';
 import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE, PGFV_WHATSAPP_DISPLAY, optimizeCloudinary } from '../../utils/helpers';
-import { BUSINESS_INFO } from '../../data/mockData';
+import { appendReferralToWhatsAppMessage, getStoredAttribution, submitAttributedOrder } from '../../services/referralTracking';
 
 interface CatalogueOrderDrawerProps {
   isOpen: boolean;
@@ -23,8 +23,12 @@ export const CatalogueOrderDrawer: React.FC<CatalogueOrderDrawerProps> = ({
 }) => {
   const [customerName, setCustomerName] = useState<string>('');
   const [customerPhone, setCustomerPhone] = useState<string>('');
+  const [customerEmail, setCustomerEmail] = useState<string>('');
   const [deliveryLocation, setDeliveryLocation] = useState<string>('');
   const [additionalNotes, setAdditionalNotes] = useState<string>('');
+  const [submitting, setSubmitting] = useState<boolean>(false);
+  const [formError, setFormError] = useState<string | null>(null);
+  const [submittedOrderRef, setSubmittedOrderRef] = useState<string | null>(null);
 
   if (!isOpen) return null;
 
@@ -36,41 +40,95 @@ export const CatalogueOrderDrawer: React.FC<CatalogueOrderDrawerProps> = ({
     return acc;
   }, 0);
 
-  const hasPricedItems = items.some(i => typeof i.subtotal === 'number');
   const hasUnpricedItems = items.some(i => typeof i.subtotal !== 'number');
+  const activeAttribution = getStoredAttribution();
 
-  const handleWhatsAppCheckout = () => {
+  const handleWhatsAppCheckout = async () => {
     if (items.length === 0) return;
+    setFormError(null);
 
-    let message = `Hello Precious Gem Foods Ventures (PGFV),\n\n`;
-    message += `I would like to place an order / price enquiry from your Product Catalogue.\n\n`;
-
-    if (customerName) message += `Customer Name: ${customerName}\n`;
-    if (customerPhone) message += `Phone / WhatsApp: ${customerPhone}\n`;
-    if (deliveryLocation) message += `Delivery Location / Town: ${deliveryLocation}\n`;
-    message += `\n*SELECTED PRODUCTS & PACKAGES:*\n`;
-
-    items.forEach((item, idx) => {
-      const pricePart = typeof item.subtotal === 'number' 
-        ? `— ₦${item.subtotal.toLocaleString()} (₦${item.selectedSize.price?.toLocaleString()} each)` 
-        : `— [Request Price]`;
-      message += `${idx + 1}. ${item.name} (${item.selectedSize.label}) x ${item.quantity} ${pricePart}\n`;
-    });
-
-    if (calculatedTotal > 0) {
-      message += `\n*Known Items Subtotal:* ₦${calculatedTotal.toLocaleString()}\n`;
+    if (!customerName.trim() || customerName.trim().length < 2) {
+      setFormError('Please enter your Full Name so we can record your order reference.');
+      return;
     }
-    if (hasUnpricedItems) {
-      message += `*Note:* Items marked [Request Price] will be quoted based on current batch weight & market rates.\n`;
+    const phoneDigits = customerPhone.replace(/[^0-9]/g, '');
+    if (phoneDigits.length < 10) {
+      setFormError('Please enter a valid 11-digit Phone / WhatsApp number.');
+      return;
+    }
+    if (!deliveryLocation.trim()) {
+      setFormError('Please enter your Delivery Town / Location.');
+      return;
     }
 
-    if (additionalNotes) {
-      message += `\nAdditional Notes / Instructions:\n${additionalNotes}\n`;
+    setSubmitting(true);
+    try {
+      const itemsSummary = items
+        .map((item) => {
+          const pricePart =
+            typeof item.subtotal === 'number'
+              ? `₦${item.subtotal.toLocaleString()}`
+              : 'Request Price';
+          return `${item.name} (${item.selectedSize.label}) x${item.quantity} [${pricePart}]`;
+        })
+        .join('; ');
+
+      const submitted = await submitAttributedOrder({
+        channel: 'website',
+        customerName: customerName.trim(),
+        customerPhone: customerPhone.trim(),
+        customerEmail: customerEmail.trim() || undefined,
+        deliveryLocation: deliveryLocation.trim(),
+        itemsSummary,
+        orderTotalNgn: calculatedTotal,
+        hasUnpricedItems,
+      });
+
+      setSubmittedOrderRef(submitted.orderRef);
+
+      let message = `Hello Precious Gem Foods Ventures (PGFV),\n\n`;
+      message += `I have submitted an order from your Product Catalogue.\n\n`;
+      message += `Order Reference: ${submitted.orderRef}\n`;
+      if (submitted.referralCode) {
+        message += `Referral Code: ${submitted.referralCode}\n`;
+        message += `Referral Attribution Ref: ${submitted.attributionRef}\n`;
+      }
+      message += `Customer Name: ${customerName.trim()}\n`;
+      message += `Phone / WhatsApp: ${customerPhone.trim()}\n`;
+      if (customerEmail.trim()) message += `Email: ${customerEmail.trim()}\n`;
+      message += `Delivery Location / Town: ${deliveryLocation.trim()}\n`;
+      message += `\n*SELECTED PRODUCTS & PACKAGES:*\n`;
+
+      items.forEach((item, idx) => {
+        const pricePart = typeof item.subtotal === 'number' 
+          ? `— ₦${item.subtotal.toLocaleString()} (₦${item.selectedSize.price?.toLocaleString()} each)` 
+          : `— [Request Price]`;
+        message += `${idx + 1}. ${item.name} (${item.selectedSize.label}) x ${item.quantity} ${pricePart}\n`;
+      });
+
+      if (calculatedTotal > 0) {
+        message += `\n*Known Items Subtotal:* ₦${calculatedTotal.toLocaleString()}\n`;
+      }
+      if (hasUnpricedItems) {
+        message += `*Note:* Items marked [Request Price] will be quoted based on current batch weight & market rates.\n`;
+      }
+
+      if (additionalNotes.trim()) {
+        message += `\nAdditional Notes / Instructions:\n${additionalNotes.trim()}\n`;
+      }
+
+      message += `\nPayment Status: PENDING VERIFICATION (Bank transfer details requested). Please confirm availability and delivery timeline. Thank you!`;
+
+      const enhanced = submitted.referralCode
+        ? message
+        : appendReferralToWhatsAppMessage(message, submitted.orderRef).message;
+
+      window.open(createWhatsAppUrl(enhanced, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
+    } catch (err) {
+      setFormError(err instanceof Error ? err.message : 'Unable to record order. Please try again.');
+    } finally {
+      setSubmitting(false);
     }
-
-    message += `\nPlease confirm total pricing, availability, and delivery timeline. Thank you!`;
-
-    window.open(createWhatsAppUrl(message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -216,9 +274,32 @@ export const CatalogueOrderDrawer: React.FC<CatalogueOrderDrawerProps> = ({
 
               {/* Order Form Details */}
               <div className="mt-4 p-4 rounded-2xl bg-white border border-[#E5DDD0] space-y-3">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#1B4332] block">
-                  YOUR DELIVERY & CONTACT INFO
-                </span>
+                <div className="flex items-center justify-between">
+                  <span className="text-[10px] font-bold uppercase tracking-wider text-[#1B4332] block">
+                    YOUR DELIVERY & CONTACT INFO *
+                  </span>
+                  {activeAttribution && (
+                    <span className="text-[10px] font-mono font-bold px-2 py-0.5 rounded bg-[#FAF5EC] text-[#1B4332] border border-[#E2B13C]/40">
+                      Ref: {activeAttribution.referralCode}
+                    </span>
+                  )}
+                </div>
+
+                {formError && (
+                  <div className="p-2.5 rounded-xl bg-red-50 border border-red-200 text-[11px] text-red-800 flex items-start gap-2">
+                    <AlertCircle className="w-3.5 h-3.5 shrink-0 mt-0.5" />
+                    <span>{formError}</span>
+                  </div>
+                )}
+
+                {submittedOrderRef && (
+                  <div className="p-2.5 rounded-xl bg-emerald-50 border border-emerald-200 text-[11px] text-emerald-900 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 shrink-0" />
+                    <span>
+                      Order <strong className="font-mono">{submittedOrderRef}</strong> saved (Payment: PENDING VERIFICATION).
+                    </span>
+                  </div>
+                )}
 
                 <div className="space-y-2.5">
                   <div>
@@ -263,6 +344,19 @@ export const CatalogueOrderDrawer: React.FC<CatalogueOrderDrawerProps> = ({
 
                   <div>
                     <label className="block text-[11px] font-bold text-[#4B5A52] mb-1">
+                      Email Address (Optional)
+                    </label>
+                    <input
+                      type="email"
+                      value={customerEmail}
+                      onChange={(e) => setCustomerEmail(e.target.value)}
+                      placeholder="you@example.com"
+                      className="w-full px-3 py-2 text-xs rounded-lg border border-[#D5CCBE] bg-[#FDFBF7] text-[#143527] focus:outline-none focus:ring-1 focus:ring-[#1B4332]"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-[11px] font-bold text-[#4B5A52] mb-1">
                       Additional Notes / Custom Sizing (Optional)
                     </label>
                     <textarea
@@ -299,14 +393,19 @@ export const CatalogueOrderDrawer: React.FC<CatalogueOrderDrawerProps> = ({
 
             <button
               type="button"
+              disabled={submitting}
               onClick={handleWhatsAppCheckout}
-              className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-[#0A1E14] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
+              className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] disabled:opacity-60 text-[#0A1E14] font-bold text-xs sm:text-sm flex items-center justify-center gap-2 shadow-sm transition-all cursor-pointer"
             >
               <MessageCircle className="w-4 h-4 fill-current" />
-              <span>Send Order to WhatsApp ({PGFV_WHATSAPP_DISPLAY})</span>
+              <span>
+                {submitting
+                  ? 'Recording Order...'
+                  : `Submit Order & Send to WhatsApp (${PGFV_WHATSAPP_DISPLAY})`}
+              </span>
             </button>
             <p className="text-[10px] text-center text-[#7F8F87]">
-              Pre-populated instant enquiry • Fast response directly from PGFV Ile-Ife
+              Records your unique Order Reference • Fast response from PGFV Ile-Ife
             </p>
           </div>
         )}

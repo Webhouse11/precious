@@ -14,6 +14,11 @@ import { ServicesSection } from './components/sections/ServicesSection';
 import { ServicesDirectorySection } from './components/sections/ServicesDirectorySection';
 import { ChristmasSavingsSection } from './components/sections/ChristmasSavingsSection';
 
+import { testFirestoreConnection } from './lib/firebase';
+import { processIncomingReferralFromUrl } from './services/referralTracking';
+import { ReferralAttributionCookie } from './types/referral';
+import { ReferralAttributionBanner } from './components/ambassadors/ReferralAttributionBanner';
+
 // Lazy Loaded Below-The-Fold Sections for maximum initial load performance
 const ProductsSection = lazy(() => import('./components/sections/ProductsSection').then(m => ({ default: m.ProductsSection })));
 const SavingsOptionsSection = lazy(() => import('./components/sections/SavingsOptionsSection').then(m => ({ default: m.SavingsOptionsSection })));
@@ -33,6 +38,12 @@ const ContactSection = lazy(() => import('./components/sections/ContactSection')
 const StudentFoodPackagesPage = lazy(() => import('./components/students/StudentFoodPackagesPage').then(m => ({ default: m.StudentFoodPackagesPage })));
 const CataloguePage = lazy(() => import('./components/catalogue/CataloguePage').then(m => ({ default: m.CataloguePage })));
 const EventSnackPackagesPage = lazy(() => import('./components/events/EventSnackPackagesPage').then(m => ({ default: m.EventSnackPackagesPage })));
+const ChristmasAmbassadorsPage = lazy(() => import('./components/ambassadors/ChristmasAmbassadorsPage').then(m => ({ default: m.ChristmasAmbassadorsPage })));
+const AmbassadorRegisterPage = lazy(() => import('./components/ambassadors/AmbassadorRegisterPage').then(m => ({ default: m.AmbassadorRegisterPage })));
+const AmbassadorLoginPage = lazy(() => import('./components/ambassadors/AmbassadorLoginPage').then(m => ({ default: m.AmbassadorLoginPage })));
+const AmbassadorDashboardPage = lazy(() => import('./components/ambassadors/AmbassadorDashboardPage').then(m => ({ default: m.AmbassadorDashboardPage })));
+const AdminLoginPage = lazy(() => import('./components/admin/AdminLoginPage').then(m => ({ default: m.AdminLoginPage })));
+const AdminDashboardPage = lazy(() => import('./components/admin/AdminDashboardPage').then(m => ({ default: m.AdminDashboardPage })));
 
 // Lazy Loaded Modals (only loaded when user triggers them)
 const RegistrationModal = lazy(() => import('./components/modals/RegistrationModal').then(m => ({ default: m.RegistrationModal })));
@@ -48,29 +59,81 @@ function SectionLoader() {
   );
 }
 
-export default function App() {
-  const [currentPage, setCurrentPage] = useState<PageView>(() => {
-    if (typeof window !== 'undefined') {
-      const path = window.location.pathname;
-      const hash = window.location.hash;
-      if (path === '/student-food-packages' || hash === '#student-food-packages' || hash === '#student-solutions') {
-        return 'students';
-      }
-      if (path === '/catalogue' || hash === '#catalogue' || hash === '#products') {
-        return 'catalogue';
-      }
-      if (path === '/event-snack-packages' || hash === '#event-snack-packages' || hash === '#event-packages' || hash === '#snacks') {
-        return 'events-snacks';
-      }
-    }
-    return 'home';
-  });
+function resolvePageFromLocation(): PageView {
+  if (typeof window === 'undefined') return 'home';
+  const path = window.location.pathname.replace(/\/+$/, '') || '/';
+  const hash = window.location.hash;
 
-  // Dynamic SEO Title & Meta sync
+  if (path === '/christmas-ambassadors/register') return 'christmas-ambassadors-register';
+  if (path === '/christmas-ambassadors') return 'christmas-ambassadors';
+  if (path === '/ambassador/login') return 'ambassador-login';
+  if (path === '/ambassador/dashboard') return 'ambassador-dashboard';
+  if (path === '/admin/login') return 'admin-login';
+  if (path === '/admin/dashboard' || path === '/admin') return 'admin-dashboard';
+  if (path === '/admin/ambassadors') return 'admin-ambassadors';
+  if (path === '/admin/referrals') return 'admin-referrals';
+  if (path === '/admin/orders') return 'admin-orders';
+  if (path === '/admin/rewards') return 'admin-rewards';
+  if (path === '/admin/campaigns') return 'admin-campaigns';
+  if (path === '/student-food-packages' || hash === '#student-food-packages' || hash === '#student-solutions') return 'students';
+  if (path === '/catalogue' || hash === '#catalogue' || hash === '#products') return 'catalogue';
+  if (path === '/event-snack-packages' || hash === '#event-snack-packages' || hash === '#event-packages' || hash === '#snacks') return 'events-snacks';
+  return 'home';
+}
+
+function pageToPathname(page: PageView): string {
+  switch (page) {
+    case 'students': return '/student-food-packages';
+    case 'catalogue': return '/catalogue';
+    case 'events-snacks': return '/event-snack-packages';
+    case 'christmas-ambassadors': return '/christmas-ambassadors';
+    case 'christmas-ambassadors-register': return '/christmas-ambassadors/register';
+    case 'ambassador-login': return '/ambassador/login';
+    case 'ambassador-dashboard': return '/ambassador/dashboard';
+    case 'admin-login': return '/admin/login';
+    case 'admin-dashboard': return '/admin/dashboard';
+    case 'admin-ambassadors': return '/admin/ambassadors';
+    case 'admin-referrals': return '/admin/referrals';
+    case 'admin-orders': return '/admin/orders';
+    case 'admin-rewards': return '/admin/rewards';
+    case 'admin-campaigns': return '/admin/campaigns';
+    default: return '/';
+  }
+}
+
+export default function App() {
+  const [currentPage, setCurrentPage] = useState<PageView>(() => resolvePageFromLocation());
+  const [activeAttribution, setActiveAttribution] = useState<ReferralAttributionCookie | null>(null);
+
+  const isPortalRoute =
+    currentPage === 'ambassador-login' ||
+    currentPage === 'ambassador-dashboard' ||
+    currentPage.startsWith('admin-');
+
+  // Verify Firestore connection & capture incoming ?ref=CODE attribution on startup
   useEffect(() => {
+    testFirestoreConnection().catch(() => {});
+    processIncomingReferralFromUrl().then((attr) => {
+      if (attr) setActiveAttribution(attr);
+    }).catch(() => {});
+  }, []);
+
+  // Dynamic SEO Title, Meta & Robots sync
+  useEffect(() => {
+    const metaDesc = document.querySelector('meta[name="description"]');
+    const metaRobots = document.querySelector('meta[name="robots"]');
+    const metaGooglebot = document.querySelector('meta[name="googlebot"]');
+
+    if (isPortalRoute) {
+      if (metaRobots) metaRobots.setAttribute('content', 'noindex, nofollow');
+      if (metaGooglebot) metaGooglebot.setAttribute('content', 'noindex, nofollow');
+    } else {
+      if (metaRobots) metaRobots.setAttribute('content', 'index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1');
+      if (metaGooglebot) metaGooglebot.setAttribute('content', 'index, follow');
+    }
+
     if (currentPage === 'students') {
       document.title = 'Student Food Packages in Ile-Ife | Precious Gem Foods Ventures';
-      const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute(
           'content',
@@ -79,7 +142,6 @@ export default function App() {
       }
     } else if (currentPage === 'catalogue') {
       document.title = 'Product & Package Catalogue | Precious Gem Foods Ventures';
-      const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute(
           'content',
@@ -88,16 +150,34 @@ export default function App() {
       }
     } else if (currentPage === 'events-snacks') {
       document.title = 'Event & Snack Packages | Small Chops & Pastries | PGFV Ile-Ife';
-      const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute(
           'content',
           'Freshly prepared event snack packages, small chops, puff puff, chin chin, and Chapman for student hangouts, meetings, church programs, birthdays, and conferences in Ile-Ife.'
         );
       }
+    } else if (currentPage === 'christmas-ambassadors') {
+      document.title = 'PGFV Christmas Ambassador Programme 2026 | Precious Gem Foods Ventures';
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Become a PGFV Christmas Ambassador! Refer 10 qualifying new customers between December 1–10, 2026 and earn One ₦8,000 PGFV Christmas Food Box.'
+        );
+      }
+    } else if (currentPage === 'christmas-ambassadors-register') {
+      document.title = 'Apply as a PGFV Christmas Ambassador | Precious Gem Foods Ventures';
+      if (metaDesc) {
+        metaDesc.setAttribute(
+          'content',
+          'Submit your application for the PGFV Christmas Referral Ambassador Programme 2026.'
+        );
+      }
+    } else if (currentPage === 'ambassador-login' || currentPage === 'ambassador-dashboard') {
+      document.title = 'Ambassador Portal | Precious Gem Foods Ventures';
+    } else if (currentPage.startsWith('admin-')) {
+      document.title = 'Administrator Console | Precious Gem Foods Ventures';
     } else {
       document.title = 'Precious Gem Foods Ventures | Food Solutions & Quality Foodstuffs';
-      const metaDesc = document.querySelector('meta[name="description"]');
       if (metaDesc) {
         metaDesc.setAttribute(
           'content',
@@ -105,24 +185,12 @@ export default function App() {
         );
       }
     }
-  }, [currentPage]);
+  }, [currentPage, isPortalRoute]);
 
   // Handle browser back/forward buttons
   useEffect(() => {
     const handlePopState = () => {
-      if (typeof window !== 'undefined') {
-        const path = window.location.pathname;
-        const hash = window.location.hash;
-        if (path === '/student-food-packages' || hash === '#student-food-packages') {
-          setCurrentPage('students');
-        } else if (path === '/catalogue' || hash === '#catalogue') {
-          setCurrentPage('catalogue');
-        } else if (path === '/event-snack-packages' || hash === '#event-snack-packages') {
-          setCurrentPage('events-snacks');
-        } else {
-          setCurrentPage('home');
-        }
-      }
+      setCurrentPage(resolvePageFromLocation());
     };
     window.addEventListener('popstate', handlePopState);
     return () => window.removeEventListener('popstate', handlePopState);
@@ -135,13 +203,14 @@ export default function App() {
   const [isPrivacyOpen, setIsPrivacyOpen] = useState(false);
   const [isAnnouncementOpen, setIsAnnouncementOpen] = useState(false);
 
-  // Trigger popup when visitor lands on the website
+  // Trigger popup when visitor lands on public website (not on portal routes)
   useEffect(() => {
+    if (isPortalRoute) return;
     const timer = setTimeout(() => {
       setIsAnnouncementOpen(true);
     }, 600);
     return () => clearTimeout(timer);
-  }, []);
+  }, [isPortalRoute]);
 
   // Enquiry modal state
   const [enquiryConfig, setEnquiryConfig] = useState<{
@@ -157,22 +226,9 @@ export default function App() {
   const handleNavigate = (page: PageView, sectionId?: string) => {
     setCurrentPage(page);
     if (typeof window !== 'undefined') {
-      if (page === 'students') {
-        if (window.location.pathname !== '/student-food-packages') {
-          window.history.pushState(null, '', '/student-food-packages');
-        }
-      } else if (page === 'catalogue') {
-        if (window.location.pathname !== '/catalogue') {
-          window.history.pushState(null, '', '/catalogue');
-        }
-      } else if (page === 'events-snacks') {
-        if (window.location.pathname !== '/event-snack-packages') {
-          window.history.pushState(null, '', '/event-snack-packages');
-        }
-      } else {
-        if (window.location.pathname !== '/') {
-          window.history.pushState(null, '', '/');
-        }
+      const targetPath = pageToPathname(page);
+      if (window.location.pathname !== targetPath) {
+        window.history.pushState(null, '', targetPath);
       }
     }
     if (sectionId) {
@@ -238,6 +294,8 @@ export default function App() {
         onOpenAnnouncement={() => setIsAnnouncementOpen(true)}
       />
 
+      {!isPortalRoute && <ReferralAttributionBanner attribution={activeAttribution} />}
+
       {/* Main Content Flow */}
       <main className="flex-1 pb-16 lg:pb-0">
         {currentPage === 'students' ? (
@@ -262,6 +320,30 @@ export default function App() {
               onNavigateToCatalogue={() => handleNavigate('catalogue')}
               onNavigateToServices={() => handleNavigate('services', 'services-section')}
             />
+          </Suspense>
+        ) : currentPage === 'christmas-ambassadors' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <ChristmasAmbassadorsPage onNavigate={handleNavigate} />
+          </Suspense>
+        ) : currentPage === 'christmas-ambassadors-register' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <AmbassadorRegisterPage onNavigate={handleNavigate} />
+          </Suspense>
+        ) : currentPage === 'ambassador-login' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <AmbassadorLoginPage onNavigate={handleNavigate} />
+          </Suspense>
+        ) : currentPage === 'ambassador-dashboard' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <AmbassadorDashboardPage onNavigate={handleNavigate} />
+          </Suspense>
+        ) : currentPage === 'admin-login' ? (
+          <Suspense fallback={<SectionLoader />}>
+            <AdminLoginPage onNavigate={handleNavigate} />
+          </Suspense>
+        ) : currentPage.startsWith('admin-') ? (
+          <Suspense fallback={<SectionLoader />}>
+            <AdminDashboardPage currentPage={currentPage} onNavigate={handleNavigate} />
           </Suspense>
         ) : (
           <>
@@ -424,24 +506,28 @@ export default function App() {
         onOpenPrivacy={() => setIsPrivacyOpen(true)}
       />
 
-      {/* Persistent Action Utilities */}
-      <FloatingWhatsApp />
+      {/* Persistent Action Utilities (public pages only) */}
+      {!isPortalRoute && <FloatingWhatsApp />}
       
-      <StickyMobileCTA
-        currentPage={currentPage}
-        onStartSaving={() => handleOpenRegister()}
-        onViewPlans={() => handleNavigate('savings', 'savings-options')}
-        onOrderStudentPackage={() => {
-          const el = document.getElementById('student-order-form-section');
-          if (el) el.scrollIntoView({ behavior: 'smooth' });
-        }}
-      />
+      {!isPortalRoute && (
+        <StickyMobileCTA
+          currentPage={currentPage}
+          onStartSaving={() => handleOpenRegister()}
+          onViewPlans={() => handleNavigate('savings', 'savings-options')}
+          onOrderStudentPackage={() => {
+            const el = document.getElementById('student-order-form-section');
+            if (el) el.scrollIntoView({ behavior: 'smooth' });
+          }}
+        />
+      )}
 
       {/* Special Announcement Popup Modal on Page Landing */}
-      <AnnouncementPopupModal
-        isOpen={isAnnouncementOpen}
-        onClose={() => setIsAnnouncementOpen(false)}
-      />
+      {!isPortalRoute && (
+        <AnnouncementPopupModal
+          isOpen={isAnnouncementOpen}
+          onClose={() => setIsAnnouncementOpen(false)}
+        />
+      )}
 
       {/* Interactive Modals loaded on-demand */}
       <Suspense fallback={null}>

@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { MessageSquare, X, Send, Sparkles } from 'lucide-react';
 import { createWhatsAppUrl } from '../../utils/helpers';
 import { BUSINESS_INFO } from '../../data/mockData';
+import { appendReferralToWhatsAppMessage } from '../../services/referralTracking';
 
 export function FloatingWhatsApp() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,7 +27,8 @@ export function FloatingWhatsApp() {
   ];
 
   const handleSend = (text: string) => {
-    window.open(createWhatsAppUrl(text), '_blank');
+    const enhanced = appendReferralToWhatsAppMessage(text);
+    window.open(createWhatsAppUrl(enhanced.message), '_blank');
     setIsOpen(false);
   };
 

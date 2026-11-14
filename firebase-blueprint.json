@@ -1,0 +1,425 @@
+{
+  "entities": {
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized PGFV system administrator with privileges to approve ambassadors, verify payments, manage campaigns, and fulfil rewards.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "email": { "type": "string", "format": "email", "maxLength": 180 },
+        "name": { "type": "string", "maxLength": 120 },
+        "role": { "type": "string", "enum": ["admin", "super_admin"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "email", "name", "role", "createdAt"]
+    },
+    "Campaign": {
+      "title": "Campaign",
+      "description": "Reusable referral campaign configuration supporting Christmas 2026 and future acquisition campaigns.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "name": { "type": "string", "maxLength": 160 },
+        "slug": { "type": "string", "maxLength": 80 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "startDate": { "type": "string", "maxLength": 40 },
+        "endDate": { "type": "string", "maxLength": 40 },
+        "timezone": { "type": "string", "maxLength": 40 },
+        "referralTarget": { "type": "integer" },
+        "rewardDescription": { "type": "string", "maxLength": 200 },
+        "rewardValueNgn": { "type": "integer" },
+        "attributionWindowDays": { "type": "integer" },
+        "qualificationRules": { "type": "string", "maxLength": 1500 },
+        "status": { "type": "string", "enum": ["active", "draft", "paused", "ended"] },
+        "registrationOpen": { "type": "boolean" },
+        "createdBy": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "id",
+        "name",
+        "slug",
+        "description",
+        "startDate",
+        "endDate",
+        "timezone",
+        "referralTarget",
+        "rewardDescription",
+        "rewardValueNgn",
+        "attributionWindowDays",
+        "qualificationRules",
+        "status",
+        "registrationOpen",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Ambassador": {
+      "title": "Ambassador",
+      "description": "Registered PGFV Ambassador account containing profile details, approval status, referral code, and verified stats.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "applicationRef": { "type": "string", "maxLength": 40 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 120 },
+        "phone": { "type": "string", "minLength": 7, "maxLength": 30 },
+        "normalizedPhone": { "type": "string", "minLength": 7, "maxLength": 25 },
+        "email": { "type": "string", "format": "email", "maxLength": 180 },
+        "normalizedEmail": { "type": "string", "maxLength": 180 },
+        "state": { "type": "string", "minLength": 2, "maxLength": 60 },
+        "city": { "type": "string", "minLength": 2, "maxLength": 80 },
+        "socialPlatform": { "type": "string", "maxLength": 60 },
+        "agreedToTerms": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["PENDING_APPROVAL", "APPROVED", "REJECTED", "SUSPENDED"] },
+        "referralCode": { "type": "string", "maxLength": 32 },
+        "referralLink": { "type": "string", "maxLength": 256 },
+        "qualificationStatus": {
+          "type": "string",
+          "enum": ["NOT_YET_QUALIFIED", "IN_PROGRESS", "TARGET_ACHIEVED", "REWARD_AWAITING_APPROVAL", "REWARD_APPROVED", "REWARD_COLLECTED"]
+        },
+        "rewardStatus": {
+          "type": "string",
+          "enum": ["NOT_YET_QUALIFIED", "IN_PROGRESS", "TARGET_ACHIEVED", "REWARD_AWAITING_APPROVAL", "REWARD_APPROVED", "REWARD_COLLECTED"]
+        },
+        "visitCount": { "type": "integer" },
+        "attributedCustomersCount": { "type": "integer" },
+        "ordersReceivedCount": { "type": "integer" },
+        "ordersAwaitingVerificationCount": { "type": "integer" },
+        "confirmedReferralsCount": { "type": "integer" },
+        "rejectedReferralsCount": { "type": "integer" },
+        "approvedBy": { "type": "string", "maxLength": 180 },
+        "rejectionReason": { "type": "string", "maxLength": 400 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "uid",
+        "applicationRef",
+        "campaignId",
+        "fullName",
+        "phone",
+        "normalizedPhone",
+        "email",
+        "normalizedEmail",
+        "state",
+        "city",
+        "socialPlatform",
+        "agreedToTerms",
+        "status",
+        "referralCode",
+        "referralLink",
+        "qualificationStatus",
+        "rewardStatus",
+        "visitCount",
+        "attributedCustomersCount",
+        "ordersReceivedCount",
+        "ordersAwaitingVerificationCount",
+        "confirmedReferralsCount",
+        "rejectedReferralsCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AmbassadorUniqueIndex": {
+      "title": "AmbassadorUniqueIndex",
+      "description": "Opaque uniqueness index document keyed by normalized phone or email key to prevent duplicate ambassador registrations.",
+      "type": "object",
+      "properties": {
+        "ambassadorUid": { "type": "string", "maxLength": 128 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["ambassadorUid", "campaignId", "createdAt"]
+    },
+    "ReferralCode": {
+      "title": "ReferralCode",
+      "description": "Publicly verifiable non-PII referral code lookup linking code to ambassador UID and active campaign.",
+      "type": "object",
+      "properties": {
+        "code": { "type": "string", "maxLength": 32, "pattern": "^[A-Z0-9\\-]+$" },
+        "ambassadorId": { "type": "string", "maxLength": 128 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "active": { "type": "boolean" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["code", "ambassadorId", "campaignId", "active", "createdAt", "updatedAt"]
+    },
+    "ReferralVisit": {
+      "title": "ReferralVisit",
+      "description": "Anonymous referral visit event recorded when a visitor lands via a valid referral link.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 128 },
+        "referralCode": { "type": "string", "maxLength": 32 },
+        "ambassadorId": { "type": "string", "maxLength": 128 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "landingPage": { "type": "string", "maxLength": 240 },
+        "trafficSource": { "type": "string", "maxLength": 160 },
+        "sessionId": { "type": "string", "maxLength": 128 },
+        "visitedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "referralCode", "ambassadorId", "campaignId", "landingPage", "trafficSource", "sessionId", "visitedAt"]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer website or manually reconciled WhatsApp order with PII restricted strictly to administrators.",
+      "type": "object",
+      "properties": {
+        "orderRef": { "type": "string", "maxLength": 64 },
+        "channel": { "type": "string", "enum": ["website", "whatsapp"] },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "customerName": { "type": "string", "maxLength": 140 },
+        "customerPhone": { "type": "string", "maxLength": 30 },
+        "normalizedPhone": { "type": "string", "maxLength": 25 },
+        "customerEmail": { "type": "string", "maxLength": 180 },
+        "normalizedEmail": { "type": "string", "maxLength": 180 },
+        "deliveryLocation": { "type": "string", "maxLength": 240 },
+        "itemsSummary": { "type": "string", "maxLength": 1500 },
+        "orderTotalNgn": { "type": "number" },
+        "hasUnpricedItems": { "type": "boolean" },
+        "orderDate": { "type": "string", "maxLength": 40 },
+        "orderStatus": { "type": "string", "enum": ["PENDING", "COMPLETED", "CANCELLED", "REFUNDED"] },
+        "paymentStatus": { "type": "string", "enum": ["PENDING_VERIFICATION", "VERIFIED_PAID", "PAYMENT_REJECTED", "REFUNDED"] },
+        "referralCode": { "type": "string", "maxLength": 32 },
+        "ambassadorId": { "type": "string", "maxLength": 128 },
+        "attributionRef": { "type": "string", "maxLength": 64 },
+        "isNewCustomerFlag": { "type": "string", "enum": ["PENDING_CHECK", "VERIFIED_NEW", "EXISTING_CUSTOMER", "SELF_REFERRAL", "NEEDS_REVIEW"] },
+        "qualificationState": { "type": "string", "enum": ["PENDING", "QUALIFIED", "REJECTED"] },
+        "rejectionReason": { "type": "string", "maxLength": 400 },
+        "paymentBankRef": { "type": "string", "maxLength": 120 },
+        "paymentAmountReceived": { "type": "number" },
+        "paymentDate": { "type": "string", "maxLength": 40 },
+        "paymentNotes": { "type": "string", "maxLength": 600 },
+        "paymentEvidenceNote": { "type": "string", "maxLength": 600 },
+        "verifiedByAdminUid": { "type": "string", "maxLength": 128 },
+        "verifiedByAdminEmail": { "type": "string", "maxLength": 180 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "orderRef",
+        "channel",
+        "campaignId",
+        "customerName",
+        "customerPhone",
+        "normalizedPhone",
+        "deliveryLocation",
+        "itemsSummary",
+        "orderTotalNgn",
+        "hasUnpricedItems",
+        "orderDate",
+        "orderStatus",
+        "paymentStatus",
+        "referralCode",
+        "ambassadorId",
+        "attributionRef",
+        "isNewCustomerFlag",
+        "qualificationState",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ReferralRecord": {
+      "title": "ReferralRecord",
+      "description": "Anonymized referral attribution & qualification status record visible to the owning ambassador without exposing customer PII.",
+      "type": "object",
+      "properties": {
+        "recordId": { "type": "string", "maxLength": 64 },
+        "orderRef": { "type": "string", "maxLength": 64 },
+        "ambassadorId": { "type": "string", "maxLength": 128 },
+        "referralCode": { "type": "string", "maxLength": 32 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "channel": { "type": "string", "enum": ["website", "whatsapp"] },
+        "orderSummaryLabel": { "type": "string", "maxLength": 160 },
+        "orderTotalNgn": { "type": "number" },
+        "orderStatus": { "type": "string", "enum": ["PENDING", "COMPLETED", "CANCELLED", "REFUNDED"] },
+        "paymentStatus": { "type": "string", "enum": ["PENDING_VERIFICATION", "VERIFIED_PAID", "PAYMENT_REJECTED", "REFUNDED"] },
+        "qualificationStatus": { "type": "string", "enum": ["AWAITING_PAYMENT", "QUALIFIED", "REJECTED"] },
+        "rejectionReason": { "type": "string", "maxLength": 400 },
+        "customerKeyHash": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "recordId",
+        "orderRef",
+        "ambassadorId",
+        "referralCode",
+        "campaignId",
+        "channel",
+        "orderSummaryLabel",
+        "orderTotalNgn",
+        "orderStatus",
+        "paymentStatus",
+        "qualificationStatus",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CustomerRecord": {
+      "title": "CustomerRecord",
+      "description": "Normalized customer directory used by administrators to verify new-customer eligibility and prevent duplicate qualification.",
+      "type": "object",
+      "properties": {
+        "normalizedPhone": { "type": "string", "maxLength": 25 },
+        "customerName": { "type": "string", "maxLength": 140 },
+        "normalizedEmail": { "type": "string", "maxLength": 180 },
+        "firstOrderRef": { "type": "string", "maxLength": 64 },
+        "qualifyingOrderRef": { "type": "string", "maxLength": 64 },
+        "qualifyingCampaignId": { "type": "string", "maxLength": 64 },
+        "totalOrdersCount": { "type": "integer" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["normalizedPhone", "customerName", "firstOrderRef", "totalOrdersCount", "createdAt", "updatedAt"]
+    },
+    "PaymentRecord": {
+      "title": "PaymentRecord",
+      "description": "Manual bank transfer and payment verification ledger managed by PGFV administrators.",
+      "type": "object",
+      "properties": {
+        "paymentId": { "type": "string", "maxLength": 64 },
+        "orderRef": { "type": "string", "maxLength": 64 },
+        "bankTransactionRef": { "type": "string", "maxLength": 120 },
+        "amountReceived": { "type": "number" },
+        "paymentDate": { "type": "string", "maxLength": 40 },
+        "verificationState": { "type": "string", "enum": ["PENDING_VERIFICATION", "VERIFIED_PAID", "PAYMENT_REJECTED", "REFUNDED"] },
+        "notes": { "type": "string", "maxLength": 600 },
+        "evidenceNote": { "type": "string", "maxLength": 600 },
+        "verifiedByUid": { "type": "string", "maxLength": 128 },
+        "verifiedByEmail": { "type": "string", "maxLength": 180 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["paymentId", "orderRef", "bankTransactionRef", "amountReceived", "paymentDate", "verificationState", "verifiedByUid", "verifiedByEmail", "createdAt"]
+    },
+    "RewardRecord": {
+      "title": "RewardRecord",
+      "description": "Ambassador reward record for a campaign, keyed uniquely by campaignId_ambassadorId to prevent duplicate reward issuance.",
+      "type": "object",
+      "properties": {
+        "rewardId": { "type": "string", "maxLength": 200 },
+        "campaignId": { "type": "string", "maxLength": 64 },
+        "ambassadorId": { "type": "string", "maxLength": 128 },
+        "ambassadorName": { "type": "string", "maxLength": 120 },
+        "referralCode": { "type": "string", "maxLength": 32 },
+        "qualifyingReferralsCount": { "type": "integer" },
+        "rewardDescription": { "type": "string", "maxLength": 200 },
+        "rewardValueNgn": { "type": "integer" },
+        "status": { "type": "string", "enum": ["REWARD_AWAITING_APPROVAL", "REWARD_APPROVED", "REWARD_COLLECTED"] },
+        "approvedBy": { "type": "string", "maxLength": 180 },
+        "approvedAt": { "type": "string", "maxLength": 40 },
+        "collectedAt": { "type": "string", "maxLength": 40 },
+        "fulfilmentNotes": { "type": "string", "maxLength": 600 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": [
+        "rewardId",
+        "campaignId",
+        "ambassadorId",
+        "ambassadorName",
+        "referralCode",
+        "qualifyingReferralsCount",
+        "rewardDescription",
+        "rewardValueNgn",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Notification": {
+      "title": "Notification",
+      "description": "In-app notification alert for administrators or individual ambassadors.",
+      "type": "object",
+      "properties": {
+        "notificationId": { "type": "string", "maxLength": 128 },
+        "recipientRole": { "type": "string", "enum": ["admin", "ambassador"] },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "type": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 160 },
+        "message": { "type": "string", "maxLength": 600 },
+        "read": { "type": "boolean" },
+        "linkPath": { "type": "string", "maxLength": 160 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["notificationId", "recipientRole", "recipientUid", "type", "title", "message", "read", "createdAt"]
+    },
+    "AuditLog": {
+      "title": "AuditLog",
+      "description": "Immutable administrative audit trail recording verification, approval, reward, and campaign actions.",
+      "type": "object",
+      "properties": {
+        "logId": { "type": "string", "maxLength": 128 },
+        "actorUid": { "type": "string", "maxLength": 128 },
+        "actorEmail": { "type": "string", "maxLength": 180 },
+        "action": { "type": "string", "maxLength": 80 },
+        "targetCollection": { "type": "string", "maxLength": 64 },
+        "targetId": { "type": "string", "maxLength": 160 },
+        "summary": { "type": "string", "maxLength": 800 },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["logId", "actorUid", "actorEmail", "action", "targetCollection", "targetId", "summary", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/Admin" },
+      "description": "Authorized administrator role documents."
+    },
+    "/campaigns/{campaignId}": {
+      "schema": { "$ref": "#/entities/Campaign" },
+      "description": "Referral campaign definitions and active campaign configuration."
+    },
+    "/ambassadors/{ambassadorId}": {
+      "schema": { "$ref": "#/entities/Ambassador" },
+      "description": "Ambassador applications, profiles, approval statuses, and verified referral counters."
+    },
+    "/ambassador_phone_index/{phoneKey}": {
+      "schema": { "$ref": "#/entities/AmbassadorUniqueIndex" },
+      "description": "Normalized phone uniqueness index preventing duplicate ambassador registrations."
+    },
+    "/ambassador_email_index/{emailKey}": {
+      "schema": { "$ref": "#/entities/AmbassadorUniqueIndex" },
+      "description": "Normalized email uniqueness index preventing duplicate ambassador registrations."
+    },
+    "/referral_codes/{code}": {
+      "schema": { "$ref": "#/entities/ReferralCode" },
+      "description": "Publicly verifiable active referral code mappings without PII."
+    },
+    "/referral_visits/{visitId}": {
+      "schema": { "$ref": "#/entities/ReferralVisit" },
+      "description": "Anonymous referral visit logs."
+    },
+    "/orders/{orderId}": {
+      "schema": { "$ref": "#/entities/Order" },
+      "description": "Customer website and WhatsApp orders (PII restricted to admins)."
+    },
+    "/referral_records/{recordId}": {
+      "schema": { "$ref": "#/entities/ReferralRecord" },
+      "description": "Anonymized referral qualification status per order, readable by owning ambassador or admin."
+    },
+    "/customers/{phoneKey}": {
+      "schema": { "$ref": "#/entities/CustomerRecord" },
+      "description": "Normalized customer history for new-customer verification (admin only)."
+    },
+    "/payments/{paymentId}": {
+      "schema": { "$ref": "#/entities/PaymentRecord" },
+      "description": "Manual bank transfer payment verification records (admin only)."
+    },
+    "/rewards/{rewardId}": {
+      "schema": { "$ref": "#/entities/RewardRecord" },
+      "description": "Ambassador reward records keyed by campaignId_ambassadorId."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/Notification" },
+      "description": "Role-scoped notifications for admins and ambassadors."
+    },
+    "/audit_logs/{logId}": {
+      "schema": { "$ref": "#/entities/AuditLog" },
+      "description": "Immutable audit log entries for all admin actions."
+    }
+  }
+}
