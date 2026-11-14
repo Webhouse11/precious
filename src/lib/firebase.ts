@@ -89,8 +89,35 @@ export async function testFirestoreConnection(): Promise<boolean> {
 export async function signInWithGoogle(): Promise<User> {
   const provider = new GoogleAuthProvider();
   provider.setCustomParameters({ prompt: 'select_account' });
-  const result = await signInWithPopup(auth, provider);
-  return result.user;
+  try {
+    const result = await signInWithPopup(auth, provider);
+    return result.user;
+  } catch (error: unknown) {
+    const code =
+      typeof error === 'object' && error !== null && 'code' in error
+        ? String((error as { code?: unknown }).code)
+        : '';
+
+    if (code === 'auth/unauthorized-domain') {
+      const hostname =
+        typeof window !== 'undefined' ? window.location.hostname : 'this domain';
+      throw new Error(
+        `This domain (${hostname}) is not authorized for Google Sign-In yet. Add "${hostname}" under Firebase Console -> Authentication -> Settings -> Authorized domains.`
+      );
+    }
+
+    if (code === 'auth/popup-blocked') {
+      throw new Error(
+        'The Google Sign-In popup was blocked by your browser. Please allow popups for this site and try again.'
+      );
+    }
+
+    if (code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request') {
+      throw new Error('Sign-in was cancelled before completing. Please try again.');
+    }
+
+    throw error;
+  }
 }
 
 export async function signOutUser(): Promise<void> {
