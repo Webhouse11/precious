@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { X, PackagePlus, MessageCircle, CheckCircle2, Plus, Check } from 'lucide-react';
 import { createWhatsAppUrl, PGFV_WHATSAPP_PHONE } from '../../utils/helpers';
 import { CustomPackageFormState } from '../../types/catalogue';
-import { appendReferralToWhatsAppMessage, submitAttributedOrder } from '../../services/referralTracking';
 
 interface CustomPackageModalProps {
   isOpen: boolean;
@@ -60,26 +59,8 @@ export const CustomPackageModal: React.FC<CustomPackageModalProps> = ({ isOpen, 
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-
-    let orderRef: string | undefined;
-    try {
-      const perPkg = Number((formData.targetBudgetPerPackage || '').replace(/[^0-9]/g, '')) || 0;
-      const saved = await submitAttributedOrder({
-        channel: 'whatsapp',
-        customerName: formData.fullName,
-        customerPhone: formData.phone,
-        customerEmail: formData.email || undefined,
-        deliveryLocation: formData.deliveryLocation || 'Ile-Ife',
-        itemsSummary: `Custom ${formData.packageType} x${formData.numberOfPackages}: ${formData.selectedStaples.join(', ')}`,
-        orderTotalNgn: perPkg * (formData.numberOfPackages || 1),
-        hasUnpricedItems: perPkg === 0,
-      });
-      orderRef = saved.orderRef;
-    } catch {
-      // Non-blocking fallback
-    }
 
     let message = `Hello Precious Gem Foods Ventures (PGFV),\n\n`;
     message += `I would like to request a *CUSTOM FOOD PACKAGE*.\n\n`;
@@ -103,8 +84,7 @@ export const CustomPackageModal: React.FC<CustomPackageModalProps> = ({ isOpen, 
 
     message += `\nPlease calculate packaging combination and advise on delivery schedule. Thank you!`;
 
-    const enhanced = appendReferralToWhatsAppMessage(message, orderRef);
-    window.open(createWhatsAppUrl(enhanced.message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
+    window.open(createWhatsAppUrl(message, PGFV_WHATSAPP_PHONE), '_blank', 'noopener,noreferrer');
     setSubmitted(true);
   };
 

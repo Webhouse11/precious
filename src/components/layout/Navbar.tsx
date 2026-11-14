@@ -10,9 +10,7 @@ import {
   ChevronDown,
   ChevronUp,
   Package,
-  ArrowRight,
-  Gift,
-  LogIn
+  ArrowRight
 } from 'lucide-react';
 import { BUSINESS_INFO } from '../../data/mockData';
 import { ALL_PGFV_SERVICES } from '../../data/servicesData';
@@ -293,18 +291,6 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             </button>
 
             <button
-              onClick={() => handleNavClick('christmas-ambassadors')}
-              className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
-                currentPage === 'christmas-ambassadors' || currentPage === 'christmas-ambassadors-register'
-                  ? 'text-[#1B4332] bg-[#EFE9DF] font-bold shadow-2xs' 
-                  : 'text-[#3E4540] hover:text-[#1B4332] hover:bg-[#F4EFE6]'
-              }`}
-            >
-              <Gift className="w-3.5 h-3.5 text-[#C68A1B]" />
-              <span>Ambassadors</span>
-            </button>
-
-            <button
               onClick={() => handleNavClick('reviews', 'reviews-section')}
               className={`px-3 py-2 rounded-lg text-[13px] xl:text-sm font-medium transition-colors whitespace-nowrap flex items-center gap-1.5 ${
                 currentPage === 'reviews' 
@@ -455,31 +441,6 @@ export function Navbar({ currentPage, onNavigate, onOpenRegister, onOpenAnnounce
             >
               <span>Student Food Packages</span>
               <span className="text-xs font-bold text-[#1B4332]">Explore</span>
-            </button>
-
-            {/* Christmas Ambassadors in mobile */}
-            <button
-              onClick={() => handleNavClick('christmas-ambassadors')}
-              className="col-span-2 text-left px-3.5 py-2.5 text-sm font-bold text-white bg-[#1B4332] hover:bg-[#143527] rounded-xl flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <Gift className="w-4 h-4 text-[#E2B13C]" />
-                <span>PGFV Christmas Ambassadors</span>
-              </div>
-              <span className="text-[10px] font-bold px-2 py-0.5 rounded bg-[#E2B13C] text-[#143527]">
-                ₦8,000 Box
-              </span>
-            </button>
-
-            <button
-              onClick={() => handleNavClick('ambassador-login')}
-              className="col-span-2 text-left px-3.5 py-2 text-xs font-bold text-[#1B4332] bg-[#EFE9DF] hover:bg-[#E5DDD0] rounded-xl flex items-center justify-between"
-            >
-              <div className="flex items-center gap-2">
-                <LogIn className="w-3.5 h-3.5 text-[#C68A1B]" />
-                <span>Ambassador Dashboard Login</span>
-              </div>
-              <span>Sign In</span>
             </button>
 
             {/* Consolidated Services Button */}

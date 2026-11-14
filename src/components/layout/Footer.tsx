@@ -214,22 +214,6 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
               </li>
               <li>
                 <button 
-                  onClick={() => onNavigate('christmas-ambassadors')}
-                  className="hover:text-[#E2B13C] transition-colors text-left font-medium text-[#E2B13C] flex items-center gap-1.5"
-                >
-                  <span>Christmas Ambassadors</span>
-                </button>
-              </li>
-              <li>
-                <button 
-                  onClick={() => onNavigate('ambassador-login')}
-                  className="hover:text-white transition-colors text-left"
-                >
-                  Ambassador Login
-                </button>
-              </li>
-              <li>
-                <button 
                   onClick={() => onNavigate('faq', 'faq-section')}
                   className="hover:text-white transition-colors text-left"
                 >
@@ -341,13 +325,6 @@ export function Footer({ onNavigate, onOpenRegister, onOpenTerms, onOpenPrivacy 
               className="hover:text-white transition-colors"
             >
               Privacy Policy
-            </button>
-            <span>•</span>
-            <button
-              onClick={() => onNavigate('admin-login')}
-              className="hover:text-[#E2B13C] transition-colors"
-            >
-              Admin Console
             </button>
             <span>•</span>
             <span className="text-[#A2B6AC]">

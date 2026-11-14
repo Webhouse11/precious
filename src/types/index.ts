@@ -72,16 +72,5 @@ export type PageView =
   | 'faq'
   | 'contact'
   | 'terms'
-  | 'privacy'
-  | 'christmas-ambassadors'
-  | 'christmas-ambassadors-register'
-  | 'ambassador-login'
-  | 'ambassador-dashboard'
-  | 'admin-login'
-  | 'admin-dashboard'
-  | 'admin-ambassadors'
-  | 'admin-referrals'
-  | 'admin-orders'
-  | 'admin-rewards'
-  | 'admin-campaigns';
+  | 'privacy';
 
